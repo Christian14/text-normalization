@@ -14,7 +14,7 @@ def DELETION(A, cost=1):
   return cost
 
 
-def SUBSTITUTION(A, B, cost=2):
+def SUBSTITUTION(A, B, cost=1):
   return cost
 
 
