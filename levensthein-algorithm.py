@@ -2,6 +2,7 @@ import collections
 import doctest
 import pprint
 import codecs
+import sys
 
 # Default cost functions.
 
@@ -187,20 +188,6 @@ class WagnerFischer(object):
 
 
 if __name__ == "__main__":
-    #print WagnerFischer("god", "gawd").cost
-    correction_file = open('possibles-words.txt')
-    especial_characters = "*"
-    word = unicode(correction_file.readline(), "utf-8")
 
-    while word != '' :
-        word = word.replace("\n","")
-        if especial_characters not in word:
-            cost = WagnerFischer(evaluated_word, word).cost
-
-            print (word.encode("utf-8"), cost)
-        else:
-            evaluated_word = word.replace(especial_characters, "")
-            print (evaluated_word.encode("utf-8"))
-        word = unicode(correction_file.readline(), "utf-8")
-    correction_file.close()
+    return WagnerFischer(sys.argv[1], sys.argv[2]).cost
 

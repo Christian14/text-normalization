@@ -1,0 +1,623 @@
+Esta palabra existe en acronimos: q
+Esta palabra existe en acronimos: te
+{
+    "@anngeleescastro": {
+        "evangelistero": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 9, 
+            "Phonetic": 0
+        }, 
+        "status": 0
+    }, 
+    "Jajajaj": {
+        "Aj": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 6, 
+            "Phonetic": 0
+        }, 
+        "Caj": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 5, 
+            "Phonetic": 0
+        }, 
+        "Ja": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 5, 
+            "Phonetic": 0
+        }, 
+        "Jan": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 5, 
+            "Phonetic": 0
+        }, 
+        "Jau": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 5, 
+            "Phonetic": 0
+        }, 
+        "status": 0
+    }, 
+    "Jajajajajaj": {
+        "Aj": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 10, 
+            "Phonetic": 0
+        }, 
+        "Caj": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 9, 
+            "Phonetic": 0
+        }, 
+        "Ja": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 9, 
+            "Phonetic": 0
+        }, 
+        "Jan": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 9, 
+            "Phonetic": 0
+        }, 
+        "Jau": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 9, 
+            "Phonetic": 0
+        }, 
+        "status": 0
+    }, 
+    "Y": {
+        "status": 1
+    }, 
+    "claroo": {
+        "aclaro": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "calor": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 3, 
+            "Phonetic": 0
+        }, 
+        "caro": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "cl aro": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "clamo": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "clara": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "clareo": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "claro": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "claror": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "claros": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "clavo": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "clero": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "cloro": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "colar": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 3, 
+            "Phonetic": 0
+        }, 
+        "lacro": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 3, 
+            "Phonetic": 0
+        }, 
+        "status": 0
+    }, 
+    "graciias": {
+        "gracia": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "gracias": {
+            "2gram": 0.5714286354881954, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "gracioso": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 3, 
+            "Phonetic": 0
+        }, 
+        "grais": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 3, 
+            "Phonetic": 0
+        }, 
+        "gratis": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 3, 
+            "Phonetic": 0
+        }, 
+        "status": 0
+    }, 
+    "grandullonaa": {
+        "agrandalo": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 6, 
+            "Phonetic": 0
+        }, 
+        "agrandarlo": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 6, 
+            "Phonetic": 0
+        }, 
+        "graduando": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 6, 
+            "Phonetic": 0
+        }, 
+        "grandull\u00f3n": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 4, 
+            "Phonetic": 0
+        }, 
+        "granulo": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 5, 
+            "Phonetic": 0
+        }, 
+        "status": 0
+    }, 
+    "invitooo": {
+        "in vto": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 4, 
+            "Phonetic": 0
+        }, 
+        "in-vto": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 4, 
+            "Phonetic": 0
+        }, 
+        "insto": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 4, 
+            "Phonetic": 0
+        }, 
+        "invento": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 4, 
+            "Phonetic": 0
+        }, 
+        "invicto": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 3, 
+            "Phonetic": 0
+        }, 
+        "invito": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "status": 0
+    }, 
+    "pagas": {
+        "status": 1
+    }, 
+    "q": {
+        "status": 1
+    }, 
+    "quierooo": {
+        "qui ero": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 3, 
+            "Phonetic": 0
+        }, 
+        "qui-ero": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 3, 
+            "Phonetic": 0
+        }, 
+        "quiebro": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 3, 
+            "Phonetic": 0
+        }, 
+        "quier": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 3, 
+            "Phonetic": 0
+        }, 
+        "quier o": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "quiera": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 3, 
+            "Phonetic": 0
+        }, 
+        "quiere": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 3, 
+            "Phonetic": 0
+        }, 
+        "quiero": {
+            "2gram": 0.28571431489151106, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "quieto": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 3, 
+            "Phonetic": 0
+        }, 
+        "quijero": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 3, 
+            "Phonetic": 0
+        }, 
+        "status": 0
+    }, 
+    "te": {
+        "status": 1
+    }, 
+    "tee": {
+        "ate": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "cte": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "e": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "et": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "re": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "rte": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "status": 0, 
+        "te": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "tea": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "tel": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "ten": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "ter": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "tes": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "toe": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "t\u00e9": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "ye": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }
+    }, 
+    "tuu": {
+        "cu": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "mu": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "pu": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "status": 0, 
+        "su": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "ta": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "tau": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "te": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "ti": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "to": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "tu": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "tui": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "tul": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "tus": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "t\u00fa": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "u": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }
+    }, 
+    "vale": {
+        "status": 1
+    }
+}
