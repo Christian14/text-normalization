@@ -334,12 +334,67 @@ def add_2_gram_percentage(words, sentence):
                                 break
         first_value = second_value
 
-    print json.dumps(words, indent=4, sort_keys=True)
+def add_3_gram_percentage(words, sentence):
 
-#def add_3_gram_percentage(words, sentence):
+    with open('files/3gram.txt', 'r') as lm_file:
+        lm = lm_file.readlines()
 
-#def add_4_gram_percentage(words, sentence):
+    n_words = 0
+    pairs = sentence.split(' ')
+    pairs = [w.translate(None, ''.join(['\n', '.', '!', '?'])) for w in pairs]
 
+    first_value = words[pairs[0]]
+    for index, w in enumerate(pairs):
+        if index + 2 > len(pairs) - 1:
+            break
+        second_value = words[pairs[index+1]]
+        third_value = words[pairs[index+2]]
+        key = pairs[index+2]
+        for t_key,  t_score in third_value.iteritems():
+            if(t_key != 'status'):
+                for s_key, s_score in second_value.iteritems():
+                    if(s_key != 'status'):
+                        for f_key, f_score in first_value.iteritems():
+                            if(f_key != 'status'):
+                                for line in lm:
+                                    line = line.replace('\n', '').split(' ')
+                                    if (line[1] == f_key and line[2] == s_key and line[3] == t_key):
+                                        words[key][t_key]['3gram'] = pow(10, float(line[0]))
+                                        break
+        first_value = second_value
+
+def add_4_gram_percentage(words, sentence):
+
+
+    with open('files/4gram.txt', 'r') as lm_file:
+        lm = lm_file.readlines()
+
+    n_words = 0
+    pairs = sentence.split(' ')
+    pairs = [w.translate(None, ''.join(['\n', '.', '!', '?'])) for w in pairs]
+
+    first_value = words[pairs[0]]
+    for index, w in enumerate(pairs):
+        if index + 3 > len(pairs) - 1:
+            break
+        second_value = words[pairs[index+1]]
+        third_value = words[pairs[index+2]]
+        fourth_value = words[pairs[index+3]]
+        key = pairs[index+3]
+        for fourth_key, fourth_score in fourth_value.iteritems():
+            if(fourth_key != 'status'):
+                for third_key,  third_score in third_value.iteritems():
+                    if(third_key != 'status'):
+                        for second_key, second_score in second_value.iteritems():
+                            if(second_key != 'status'):
+                                for first_key, first_score in first_value.iteritems():
+                                    if(first_key != 'status'):
+                                        for line in lm:
+                                            line = line.replace('\n', '').split(' ')
+                                            if (line[1] == first_key and line[2] == second_key and line[3] == third_key and line[4] == fourth_key):
+                                                words[key][fourth_key]['4gram'] = pow(10, float(line[0]))
+                                                break
+        first_value = second_value
 
 if __name__ == "__main__":
 
@@ -366,9 +421,9 @@ if __name__ == "__main__":
     add_levensthein_cost(words)
     #sudo ./ngram-count -text input.txt -order 4 -addsmooth 0 -lm 4gram.lm
     add_2_gram_percentage(words, sentence_test)
-    #add_3_gram_percentage(words, sentence_test)
-    #add_4_gram_percentage(words, sentence_test)
-    #print json.dumps(words, indent=4, sort_keys=True)
+    add_3_gram_percentage(words, sentence_test)
+    add_4_gram_percentage(words, sentence_test)
+    print json.dumps(words, indent=4, sort_keys=True)
 
 
 

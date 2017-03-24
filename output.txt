@@ -208,8 +208,8 @@ Esta palabra existe en acronimos: te
         }, 
         "gracias": {
             "2gram": 0.5714286354881954, 
-            "3gram": 0, 
-            "4gram": 0, 
+            "3gram": 0.28571431489151106, 
+            "4gram": 0.14285715601946222, 
             "Levensthein": 1, 
             "Phonetic": 0
         }, 
