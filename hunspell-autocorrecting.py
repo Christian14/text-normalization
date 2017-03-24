@@ -9,13 +9,16 @@ import doctest
 import pprint
 import codecs
 import math
+import aspell
 
 # /usr/share/hunspell/es_PE.aff
 # /usr/share/hunspell/es_PE.dic
 spellchecker = hunspell.HunSpell('/usr/share/hunspell/es_PE.dic',
                                  '/usr/share/hunspell/es_PE.aff')
 
-def correct_words(spellchecker, words, add_to_dict=[]):
+aspell = aspell.Speller('lang', 'es')
+
+def correct_words(aspell, spellchecker, words, add_to_dict=[]):
 
     if add_to_dict:
         for w in add_to_dict:
@@ -25,14 +28,17 @@ def correct_words(spellchecker, words, add_to_dict=[]):
         if(words[word]['status'] == 0):
             ok = spellchecker.spell(word)
             if not ok:
-                w_without_repetions = "".join(OrderedDict.fromkeys(word))
-                suggestions_with_repetions = spellchecker.suggest(word)
-                suggestion_without_repetions = spellchecker.suggest(w_without_repetions)
+                w_without_repetitions = "".join(OrderedDict.fromkeys(word))
+                suggestions_with_repetitions = spellchecker.suggest(word)
+                suggestion_without_repetitions = spellchecker.suggest(w_without_repetitions)
+                aspell_suggestion = aspell.suggest(word)
+                #aspell_suggestion = [print w.decode("utf-8") for w in aspell_suggestion]
+                aspell_suggestion_without_repetitions = aspell.suggest(w_without_repetitions)
+                #aspell_suggestion_without_repetitions = [unicode(w, "utf-8") for w in aspell_suggestion_without_repetitions]
+                #print aspell_suggestion
+                #print aspell_suggestion_without_repetitions
 
-                if (len(suggestions_with_repetions) > len(suggestion_without_repetions)):
-                    suggestions = suggestions_with_repetions
-                else: 
-                    suggestions = suggestion_without_repetions
+                suggestions = suggestions_with_repetitions + suggestion_without_repetitions + aspell_suggestion + aspell_suggestion_without_repetitions
 
                 if suggestions:
                     for suggestion in suggestions:
@@ -46,7 +52,7 @@ def correct_words(spellchecker, words, add_to_dict=[]):
 
 def hunspell_correction(words):
 
-    return correct_words(spellchecker, words)
+    return correct_words(aspell, spellchecker, words)
 
 def to_dictionary(tweet):
     dictionary = {}
@@ -365,7 +371,6 @@ def add_3_gram_percentage(words, sentence):
 
 def add_4_gram_percentage(words, sentence):
 
-
     with open('files/4gram.txt', 'r') as lm_file:
         lm = lm_file.readlines()
 
@@ -396,6 +401,12 @@ def add_4_gram_percentage(words, sentence):
                                                 break
         first_value = second_value
 
+def print_words(words):
+
+    #print json.dumps(words, indent=4, sort_keys=True)
+    print words
+
+
 if __name__ == "__main__":
 
     correct_sentence = "@anngeleescastro gracias grandullona...... Ja claro q te invito.. Y tu pagas vale?? Ja te quiero gracias!!".encode("utf-8")
@@ -423,9 +434,8 @@ if __name__ == "__main__":
     add_2_gram_percentage(words, sentence_test)
     add_3_gram_percentage(words, sentence_test)
     add_4_gram_percentage(words, sentence_test)
-    print json.dumps(words, indent=4, sort_keys=True)
 
-
+    print_words(words)
 
 
 

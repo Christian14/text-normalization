@@ -1,5 +1,25 @@
 Esta palabra existe en acronimos: q
 Esta palabra existe en acronimos: te
+['gracias', 'graciosa', 'gracioso', 'graciosas', 'agraci\xe1is', 'gracia', 'agracias', 'grecas', 'tracias', 'gracejas', 'ricias', 'caricias', 'garcillas', 'reacias', 'guaracas', 'agraciase', 'agraci\xe9is', 'barcias', 'garifas', 'garitas', 'jarcias', 'sarcias', 'garcetas', 'guacas', 'recias', 'rucias', 'agraciar', 'agracies']
+['gracias', 'graciosa', 'gracioso', 'gracia', 'grecos', 'gratis', 'grecas', 'graos', 'gris', 'guaracas']
+['invito', 'invit\xf3', 'invita', 'invite', 'invit\xe9', 'invitado', 'invitaos', 'invicto', 'invisto', 'incito', 'invoco', 'envite', 'invitad', 'invitan', 'invitar', 'invitas', 'inviten', 'invites']
+['invito', 'invit\xf3', 'invita', 'invite', 'invit\xe9', 'insto', 'incito', 'unto', 'invento', 'invicto', 'invisto', 'innato', 'inmuto', 'invado', 'invoco', 'envite', 'aneto', 'anito', 'anoto', 'env\xedo']
+['quiero', 'quiera', 'quiere', 'quiebro', 'quieto', 'quer\xeda', 'querido', 'quera', 'querr\xe1', 'querr\xe9', 'quereos', 'quieran', 'quieras', 'quieren', 'quieres']
+['quiero', 'quiera', 'quiere', 'quiebro', 'quieto', 'quera']
+[]
+['evangelistero', 'anglesita', 'anglesitas', 'angostar', 'angostara', 'angostare', 'angostar\xe1', 'angostar\xe9', 'angosto', 'angostura', 'angustio', 'encalostro', 'ingleteo', 'angostaron', 'angustiar']
+['tui', 'tu', 'tau', 'tul', 'tus']
+['tu', 't\xfa', 'tau', 'ti', 'tui', 'tul', 'tus', 'ta', 'te', 't\xe9', 'fu', 'su', '\xf1u']
+['te', 'tefe', 'teje', 'teme', 'tese', 'tete', 'tea', 'toe', 'otee', 'ten', 'tes', 'tex', 'tez', 'lee', 'mee', 'pee']
+['te', 't\xe9', 'tea', 'toe', 'ten', 'tes', 'tex', 'tez', 'e', 'ta', 'ti', 'tu', 't\xfa', 'ate', 'be', 'ce', 'de', 'fe', 'ge', 'he', 'je', 'ke', 'le', 'me', 'pe', 'se', 've']
+['grandullona', 'grandullonas', 'grandull\xf3n', 'grandullones']
+['gir\xe1ndula', 'granulo', 'granul\xf3', 'gr\xe1nulo', 'granadillo', 'grandull\xf3n', 'ganduleo', 'gandule\xf3', 'grad\xfaalo', 'grad\xfaelo', 'granula', 'granule', 'granul\xe9', 'agr\xe1ndalo', 'agr\xe1ndelo', 'faranduleo', 'granillo', 'granadilla', 'gradual', 'grandullona', 'grandor', 'granulado', 'granulad', 'gandulea', 'gandulee', 'gandule\xe9', 'granular', 'grande', 'granel', 'r\xedndalo', 'r\xedndelo', 'r\xf3ndalo', 'r\xf3ndelo']
+['Jajajajaja', 'Jajajaja']
+['Jaja', 'Ja', 'Jau']
+['Jajajaja', 'Jajaja', 'Jajajajaja', 'Jaja', 'Jauja']
+['Jaja', 'Ja', 'Jau']
+['claro', 'clareo', 'clare\xf3', 'cloro', 'clor\xf3', 'clara', 'clero', 'calor', 'claror', 'claros', 'coloro', 'clarea', 'claree', 'clare\xe9', 'caluro', 'calar', 'celar', 'colar', 'cular', 'clora', 'clore', 'clor\xe9', 'caro', 'croo', 'aclaro']
+['claro', 'clareo', 'clare\xf3', 'clara', 'clero', 'cloro', 'clor\xf3', 'calor', 'calar', 'celar', 'colar', 'cular', 'caluro', 'claror', 'claros', 'calara', 'calare', 'calar\xe1', 'calar\xe9', 'caro', 'celara', 'celare', 'celar\xe1', 'celar\xe9', 'clarea', 'claree', 'clare\xe9', 'colara', 'colare', 'colar\xe1', 'colar\xe9', 'coloro', 'culero', 'aclaro', 'clamo', 'clavo', 'clora', 'clore', 'clor\xe9']
 {
     "@anngeleescastro": {
         "evangelistero": {
@@ -12,6 +32,13 @@ Esta palabra existe en acronimos: te
         "status": 0
     }, 
     "Jajajaj": {
+        "Abaja": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 4, 
+            "Phonetic": 0
+        }, 
         "Aj": {
             "2gram": 0, 
             "3gram": 0, 
@@ -19,11 +46,32 @@ Esta palabra existe en acronimos: te
             "Levensthein": 6, 
             "Phonetic": 0
         }, 
+        "Ajada": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 4, 
+            "Phonetic": 0
+        }, 
+        "Alhaja": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 4, 
+            "Phonetic": 0
+        }, 
         "Caj": {
             "2gram": 0, 
             "3gram": 0, 
             "4gram": 0, 
             "Levensthein": 5, 
+            "Phonetic": 0
+        }, 
+        "Graja": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 4, 
             "Phonetic": 0
         }, 
         "Ja": {
@@ -55,6 +103,13 @@ Esta palabra existe en acronimos: te
             "3gram": 0, 
             "4gram": 0, 
             "Levensthein": 10, 
+            "Phonetic": 0
+        }, 
+        "Aja": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 9, 
             "Phonetic": 0
         }, 
         "Caj": {
@@ -112,6 +167,13 @@ Esta palabra existe en acronimos: te
             "Levensthein": 2, 
             "Phonetic": 0
         }, 
+        "carolo": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
         "cl aro": {
             "2gram": 0, 
             "3gram": 0, 
@@ -141,6 +203,13 @@ Esta palabra existe en acronimos: te
             "Phonetic": 0
         }, 
         "claro": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "claro o": {
             "2gram": 0, 
             "3gram": 0, 
             "4gram": 0, 
@@ -199,7 +268,28 @@ Esta palabra existe en acronimos: te
         "status": 0
     }, 
     "graciias": {
+        "agraciaras": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 3, 
+            "Phonetic": 0
+        }, 
         "gracia": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "graciadas": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
+            "Phonetic": 0
+        }, 
+        "gracianas": {
             "2gram": 0, 
             "3gram": 0, 
             "4gram": 0, 
@@ -211,6 +301,13 @@ Esta palabra existe en acronimos: te
             "3gram": 0.28571431489151106, 
             "4gram": 0.14285715601946222, 
             "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "graciosas": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 2, 
             "Phonetic": 0
         }, 
         "gracioso": {
@@ -256,6 +353,27 @@ Esta palabra existe en acronimos: te
             "3gram": 0, 
             "4gram": 0, 
             "Levensthein": 6, 
+            "Phonetic": 0
+        }, 
+        "grandullona": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "grandullona a": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "grandullonas": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
             "Phonetic": 0
         }, 
         "grandull\u00f3n": {
@@ -430,6 +548,13 @@ Esta palabra existe en acronimos: te
             "Levensthein": 2, 
             "Phonetic": 0
         }, 
+        "otee": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
         "re": {
             "2gram": 0, 
             "3gram": 0, 
@@ -459,6 +584,20 @@ Esta palabra existe en acronimos: te
             "Levensthein": 1, 
             "Phonetic": 0
         }, 
+        "tefe": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "teje": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
         "tel": {
             "2gram": 0, 
             "3gram": 0, 
@@ -466,7 +605,28 @@ Esta palabra existe en acronimos: te
             "Levensthein": 1, 
             "Phonetic": 0
         }, 
+        "tele": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "teme": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
         "ten": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "tepe": {
             "2gram": 0, 
             "3gram": 0, 
             "4gram": 0, 
@@ -481,6 +641,20 @@ Esta palabra existe en acronimos: te
             "Phonetic": 0
         }, 
         "tes": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "tese": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "tete": {
             "2gram": 0, 
             "3gram": 0, 
             "4gram": 0, 
@@ -575,6 +749,13 @@ Esta palabra existe en acronimos: te
             "Phonetic": 0
         }, 
         "tu": {
+            "2gram": 0, 
+            "3gram": 0, 
+            "4gram": 0, 
+            "Levensthein": 1, 
+            "Phonetic": 0
+        }, 
+        "tu u": {
             "2gram": 0, 
             "3gram": 0, 
             "4gram": 0, 
