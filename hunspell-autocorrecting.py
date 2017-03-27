@@ -10,7 +10,8 @@ import pprint
 import codecs
 import math
 import aspell
-
+import subprocess
+from subprocess import Popen, PIPE
 # /usr/share/hunspell/es_PE.aff
 # /usr/share/hunspell/es_PE.dic
 spellchecker = hunspell.HunSpell('/usr/share/hunspell/es_PE.dic',
@@ -31,14 +32,14 @@ def correct_words(aspell, spellchecker, words, add_to_dict=[]):
                 w_without_repetitions = "".join(OrderedDict.fromkeys(word))
                 suggestions_with_repetitions = spellchecker.suggest(word)
                 suggestion_without_repetitions = spellchecker.suggest(w_without_repetitions)
-                aspell_suggestion = aspell.suggest(word)
+                #aspell_suggestion = aspell.suggest(word)
                 #aspell_suggestion = [print w.decode("utf-8") for w in aspell_suggestion]
-                aspell_suggestion_without_repetitions = aspell.suggest(w_without_repetitions)
+                #aspell_suggestion_without_repetitions = aspell.suggest(w_without_repetitions)
                 #aspell_suggestion_without_repetitions = [unicode(w, "utf-8") for w in aspell_suggestion_without_repetitions]
                 #print aspell_suggestion
                 #print aspell_suggestion_without_repetitions
 
-                suggestions = suggestions_with_repetitions + suggestion_without_repetitions + aspell_suggestion + aspell_suggestion_without_repetitions
+                suggestions = suggestions_with_repetitions + suggestion_without_repetitions
 
                 if suggestions:
                     for suggestion in suggestions:
@@ -403,9 +404,18 @@ def add_4_gram_percentage(words, sentence):
 
 def print_words(words):
 
-    #print json.dumps(words, indent=4, sort_keys=True)
-    print words
+    print json.dumps(words, indent=4, sort_keys=True)
+    #print words
 
+def make_transcription(words):
+
+    for word, value in words.iteritems():
+        for key, scores in value.iteritems():
+            if key == 'status':
+                continue
+            else:
+                perl_script =  subprocess.Popen(["perl", "transcriptor.pl",key], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+                words[word][key]['Phonetic'] = perl_script.communicate()[0]
 
 if __name__ == "__main__":
 
@@ -434,6 +444,8 @@ if __name__ == "__main__":
     add_2_gram_percentage(words, sentence_test)
     add_3_gram_percentage(words, sentence_test)
     add_4_gram_percentage(words, sentence_test)
+
+    make_transcription(words)
 
     print_words(words)
 
