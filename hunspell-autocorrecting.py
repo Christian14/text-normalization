@@ -424,13 +424,8 @@ class GeneticAlgorithm(object):
 
         for i in range(1000):
             self.addScores()
-
-            print_words(self.words)
-
             self.calculateFitness()
-
             self.selectionReproduction()
-
             self.mutation()
 
     def generatePopulation(self):
