@@ -12,6 +12,7 @@ import math
 import aspell
 import subprocess
 from subprocess import Popen, PIPE
+import random
 # /usr/share/hunspell/es_PE.aff
 # /usr/share/hunspell/es_PE.dic
 spellchecker = hunspell.HunSpell('/usr/share/hunspell/es_PE.dic',
@@ -33,17 +34,13 @@ def correct_words(aspell, spellchecker, words, add_to_dict=[]):
                 suggestions_with_repetitions = spellchecker.suggest(word)
                 suggestion_without_repetitions = spellchecker.suggest(w_without_repetitions)
                 #aspell_suggestion = aspell.suggest(word)
-                #aspell_suggestion = [print w.decode("utf-8") for w in aspell_suggestion]
                 #aspell_suggestion_without_repetitions = aspell.suggest(w_without_repetitions)
-                #aspell_suggestion_without_repetitions = [unicode(w, "utf-8") for w in aspell_suggestion_without_repetitions]
-                #print aspell_suggestion
-                #print aspell_suggestion_without_repetitions
 
                 suggestions = suggestions_with_repetitions + suggestion_without_repetitions
 
                 if suggestions:
                     for suggestion in suggestions:
-                        words[word][suggestion] = {"Levensthein": 0, "2gram": 0,"3gram": 0, "4gram": 0, "Phonetic": 0} 
+                        words[word][suggestion] = {"Levensthein": 0, "2gram": 0,"3gram": 0, "4gram": 0, "Phonetic": 0, "scores": {}} 
                 else:
                     words[word]['status'] = 2 #No especifica
             else:
@@ -58,7 +55,7 @@ def hunspell_correction(words):
 def to_dictionary(tweet):
     dictionary = {}
     words = tweet.split(' ')
-    special_characters = ['.', ',', '!', '?','\n','\t']
+    special_characters = ['.', ',', '!', '?','\n','\t', ';', '*', '/', '&', '"']
 
     for word in words:
         dictionary[word.translate(None, ''.join(special_characters))] = {"status": 0}
@@ -179,6 +176,22 @@ def find_gentilicis(words):
 
     return words
 
+def find_neologism(words):
+
+    with open('files/neologism.txt') as neo_file:
+        names_reader = neo_file.readlines()
+
+    for word, value in words.iteritems():
+        for names in names_reader:
+            names = names.replace('\n', '')
+            if word == names:
+                words[word]['status'] = 1
+                print "Esta palabra existe en Neologismos: " + word
+                break
+    neo_file.close()
+
+    return words
+
 
 def INSERTION(A, cost=1):
   return cost
@@ -197,20 +210,16 @@ Trace = collections.namedtuple("Trace", ["cost", "ops"])
 
 class WagnerFischer(object):
 
-    # Initializes pretty printer (shared across all class instances).
     pprinter = pprint.PrettyPrinter(width=75)
 
     def __init__(self, A, B, insertion=INSERTION, deletion=DELETION,
                  substitution=SUBSTITUTION):
-        # Stores cost functions in a dictionary for programmatic access.
         self.costs = {"I": insertion, "D": deletion, "S": substitution}
-        # Initializes table.
         self.asz = len(A)
         self.bsz = len(B)
         self._table = [[None for _ in range(self.bsz + 1)] for
                        _ in range(self.asz + 1)]
-        # From now on, all indexing done using self.__getitem__.
-        ## Fills in edges.
+
         self[0][0] = Trace(0, {"O"})  # Start cell.
         for i in range(1, self.asz + 1):
             self[i][0] = Trace(self[i - 1][0].cost + self.costs["D"](A[i - 1]),
@@ -218,21 +227,17 @@ class WagnerFischer(object):
         for j in range(1, self.bsz + 1):
             self[0][j] = Trace(self[0][j - 1].cost + self.costs["I"](B[j - 1]),
                                {"I"})
-        ## Fills in rest.
         for i in range(len(A)):
             for j in range(len(B)):
-                # Cleans it up in case there are more than one check for match
-                # first, as it is always the cheapest option.
                 if A[i] == B[j]:
                     self[i + 1][j + 1] = Trace(self[i][j].cost, {"M"})
-                # Checks for other types.
                 else:
                     costD = self[i][j + 1].cost + self.costs["D"](A[i])
                     costI = self[i + 1][j].cost + self.costs["I"](B[j])
                     costS = self[i][j].cost + self.costs["S"](A[i], B[j])
                     min_val = min(costI, costD, costS)
                     trace = Trace(min_val, set())
-                    # Adds _all_ operations matching minimum value.
+
                     if costD == min_val:
                         trace.ops.add("D")
                     if costI == min_val:
@@ -240,7 +245,7 @@ class WagnerFischer(object):
                     if costS == min_val:
                         trace.ops.add("S")
                     self[i + 1][j + 1] = trace
-        # Stores optimum cost as a property.
+
         self.cost = self[-1][-1].cost
 
     def __repr__(self):
@@ -251,19 +256,10 @@ class WagnerFischer(object):
             yield row
 
     def __getitem__(self, i):
-        """
-        Returns the i-th row of the table, which is a list and so
-        can be indexed. Therefore, e.g.,  self[2][3] == self._table[2][3]
-        """
         return self._table[i]
 
-    # Stuff for generating alignments.
 
     def _stepback(self, i, j, trace, path_back):
-        """
-        Given a cell location (i, j) and a Trace object trace, generate
-        all traces they point back to in the table
-        """
         for op in trace.ops:
             if op == "M":
                 yield i - 1, j - 1, self[i - 1][j - 1], path_back + ["M"]
@@ -274,7 +270,7 @@ class WagnerFischer(object):
             elif op == "S":
                 yield i - 1, j - 1, self[i - 1][j - 1], path_back + ["S"]
             elif op == "O":
-                return  # Origin cell, so we"re done.
+                return 
             else:
                 raise ValueError("Unknown op {!r}".format(op))
 
@@ -285,8 +281,6 @@ class WagnerFischer(object):
         while queue:
             (i, j, trace, path_back) = queue.popleft()
             if trace.ops == {"O"}:
-                # We have reached the origin, the end of a reverse path, so
-                # yield the list of edit operations in reverse.
                 yield path_back[::-1]
                 continue
             queue.extend(self._stepback(i, j, trace, path_back))
@@ -296,10 +290,8 @@ class WagnerFischer(object):
         npaths = 0
         opcounts = collections.Counter()
         for alignment in self.alignments():
-            # Counts edit types for this path, ignoring "M" (which is free).
             opcounts += collections.Counter(op for op in alignment if op != "M")
             npaths += 1
-        # Averages over all paths.
         return collections.Counter({o: c / npaths for (o, c) in
                                     opcounts.items()})
 
@@ -312,8 +304,21 @@ def add_levensthein_cost(words):
                 continue
             else:
                 words[word][key]['Levensthein'] = WagnerFischer(word, key).cost
-    #execfile( "levensthein-algorithm.py", variables )
+
     return words
+
+
+def make_transcription(words):
+
+    for word, value in words.iteritems():
+        perl_script_1 =  subprocess.Popen(["perl", "transcriptor.pl", word], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        transform_word = perl_script_1.communicate()[0]
+        for key, scores in value.iteritems():
+            if key == 'status':
+                continue
+            else:
+                perl_script_2 =  subprocess.Popen(["perl", "transcriptor.pl",key], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+                words[word][key]['Phonetic'] = WagnerFischer(transform_word, perl_script_2.communicate()[0]).cost
 
 def add_2_gram_percentage(words, sentence):
 
@@ -329,7 +334,7 @@ def add_2_gram_percentage(words, sentence):
         if index + 1 > len(pairs) - 1:
             break
         second_value = words[pairs[index+1]]
-        key = pairs[index+1]
+        key = pairs[index]
         for s_key, s_score in second_value.iteritems():
             if(s_key != 'status'):
                 for f_key, f_score in first_value.iteritems():
@@ -337,7 +342,7 @@ def add_2_gram_percentage(words, sentence):
                         for line in lm:
                             line = line.replace('\n', '').split(' ')
                             if (line[1] == f_key and line[2] == s_key):
-                                words[key][s_key]['2gram'] = pow(10, float(line[0]))
+                                words[key][f_key]['2gram'] = pow(10, float(line[0]))
                                 break
         first_value = second_value
 
@@ -356,7 +361,7 @@ def add_3_gram_percentage(words, sentence):
             break
         second_value = words[pairs[index+1]]
         third_value = words[pairs[index+2]]
-        key = pairs[index+2]
+        key = pairs[index]
         for t_key,  t_score in third_value.iteritems():
             if(t_key != 'status'):
                 for s_key, s_score in second_value.iteritems():
@@ -366,7 +371,7 @@ def add_3_gram_percentage(words, sentence):
                                 for line in lm:
                                     line = line.replace('\n', '').split(' ')
                                     if (line[1] == f_key and line[2] == s_key and line[3] == t_key):
-                                        words[key][t_key]['3gram'] = pow(10, float(line[0]))
+                                        words[key][f_key]['3gram'] = pow(10, float(line[0]))
                                         break
         first_value = second_value
 
@@ -386,7 +391,7 @@ def add_4_gram_percentage(words, sentence):
         second_value = words[pairs[index+1]]
         third_value = words[pairs[index+2]]
         fourth_value = words[pairs[index+3]]
-        key = pairs[index+3]
+        key = pairs[index]
         for fourth_key, fourth_score in fourth_value.iteritems():
             if(fourth_key != 'status'):
                 for third_key,  third_score in third_value.iteritems():
@@ -398,7 +403,7 @@ def add_4_gram_percentage(words, sentence):
                                         for line in lm:
                                             line = line.replace('\n', '').split(' ')
                                             if (line[1] == first_key and line[2] == second_key and line[3] == third_key and line[4] == fourth_key):
-                                                words[key][fourth_key]['4gram'] = pow(10, float(line[0]))
+                                                words[key][first_key]['4gram'] = pow(10, float(line[0]))
                                                 break
         first_value = second_value
 
@@ -407,15 +412,43 @@ def print_words(words):
     print json.dumps(words, indent=4, sort_keys=True)
     #print words
 
-def make_transcription(words):
 
-    for word, value in words.iteritems():
-        for key, scores in value.iteritems():
-            if key == 'status':
-                continue
-            else:
-                perl_script =  subprocess.Popen(["perl", "transcriptor.pl",key], stdin=PIPE, stdout=PIPE, stderr=PIPE)
-                words[word][key]['Phonetic'] = perl_script.communicate()[0]
+class GeneticAlgorithm(object):
+
+    def __init__(self, words):
+        self.words = words
+        self.weights = []
+        self.population = 100
+
+        self.generatePopulation()
+
+        for i in range(1000):
+            self.addScores()
+
+            print_words(self.words)
+
+            self.calculateFitness()
+
+            self.selectionReproduction()
+
+            self.mutation()
+
+    def generatePopulation(self):
+        for i in range(self.population):
+            weight = []
+            for i in range(5):
+                weight.append(random.random())
+            self.weights.append(weight)
+
+    def addScores(self):
+        for word, value in self.words.iteritems():
+            for key, scores in value.iteritems():
+                if key != 'status':
+                    for index, weights in enumerate(self.weights):
+                        words[word][key]['scores'][index] = self.calculateScore(words[word][key], weights)
+
+    def calculateScore(self, word, weights):
+        return word['Levensthein']*weights[0] + word['2gram']*weights[1] + word['3gram']*weights[2] + word['4gram']*weights[3] + word['Phonetic']*weights[4]
 
 if __name__ == "__main__":
 
@@ -447,7 +480,7 @@ if __name__ == "__main__":
 
     make_transcription(words)
 
-    print_words(words)
+    GeneticAlgorithm(words)
 
 
 
