@@ -6,8 +6,10 @@
 ####    SCRIPT: Transcriptor fonético automático del español
 ####    EMAIL:  prolepsi@yahoo.es
 ##################################################################
+
 ## INPUT: escritura ordinaria. OUTPUT: transcripcion fonetica.
 
+print transcribe($ARGV[0]);
 sub caracteres  {
 
 local $Frasev= shift;

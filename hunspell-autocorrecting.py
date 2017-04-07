@@ -219,6 +219,7 @@ class WagnerFischer(object):
         self.bsz = len(B)
         self._table = [[None for _ in range(self.bsz + 1)] for
                        _ in range(self.asz + 1)]
+
         self[0][0] = Trace(0, {"O"})  # Start cell.
         for i in range(1, self.asz + 1):
             self[i][0] = Trace(self[i - 1][0].cost + self.costs["D"](A[i - 1]),
@@ -316,7 +317,6 @@ def make_transcription(words):
             else:
                 perl_script_2 =  subprocess.Popen(["perl", "transcriptor.pl",key], stdin=PIPE, stdout=PIPE, stderr=PIPE)
                 words[word][key]['Phonetic'] = WagnerFischer(transform_word, perl_script_2.communicate()[0]).cost
-
 
 def add_2_gram_percentage(words, sentence):
 
@@ -481,9 +481,8 @@ if __name__ == "__main__":
     add_4_gram_percentage(words, sentence_test)
 
     make_transcription(words)
-    print_words(words)
-    GeneticAlgorithm(words)
 
+    GeneticAlgorithm(words)
 
 
 
