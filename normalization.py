@@ -13,10 +13,8 @@ import aspell
 import subprocess
 from subprocess import Popen, PIPE
 import random
-# /usr/share/hunspell/es_PE.aff
-# /usr/share/hunspell/es_PE.dic
-spellchecker = hunspell.HunSpell('/usr/share/hunspell/es_PE.dic',
-                                 '/usr/share/hunspell/es_PE.aff')
+
+spellchecker = hunspell.HunSpell('/usr/share/hunspell/es_ES.dic', '/usr/share/hunspell/es_ES.aff')
 
 aspell = aspell.Speller('lang', 'es')
 
@@ -176,7 +174,7 @@ class GeneticAlgorithm(object):
             for word, word_info in tweets_info.iteritems():
                 #print "Word: " + word
                 #print "Status" + str(word_info["status"])
-                for suggestion, scores in word_info["suggestions"].iteritems():
+                for suggestion, scores in word_info["suggestions"].iteritems(): #Sugerencias y sus pesos
                     #print "Suggestion: " + suggestion
                     #print "Scores: " + str(scores)
                     max_score = 0
@@ -184,20 +182,23 @@ class GeneticAlgorithm(object):
                         self.corrected[tweet_id] = {"words": {}, 'weight_index': 0}
 
                     for index, word in enumerate(sentence):
-                        if index + 1 > len(sentence):
-                            break
-                        first_value = sentence[index]
-                        second_value = sentence[index+1]
-                        if(sentence[index+2]):
+                        if index < len(sentence):
+                            first_value = sentence[index]
+                        else:
+                            first_value = ""
+                        if index + 1 < len(sentence):
+                            second_value = sentence[index+1]
+                        else:
+                            second_value = ""
+                        if index + 2 < len(sentence):
                             third_value = sentence[index+2]
                         else:
                             third_value = ""
-                        if(sentence[index+3]):
+                        if index + 3 < len(sentence):
                             fourth_value = sentence[index+3]
                         else:
                             fourth_value = ""
-                        #print first_value
-                        #print second_value
+
                         if(len(first_value) > 0 and len(second_value) > 0 and first_value[0] != "@" and second_value[0] != "@" and first_value[0] != "#" and second_value[0] != "#"):
                             score = 0
                             first_word = []
@@ -208,30 +209,34 @@ class GeneticAlgorithm(object):
                                 score = self.calculateScore(scores, weights)
                                 if(self.words[tweet_id][first_value]["suggestions"]):
                                     for sug, scr in self.words[tweet_id][first_value]["suggestions"].iteritems():
-                                        first_word.append = sug
+                                        first_word.append(sug)
                                 else:
-                                    first_word.append = first_value
+                                    first_word.append(first_value)
+
                                 if(self.words[tweet_id][second_value]["suggestions"]):
                                     for sug, scr in self.words[tweet_id][second_value]["suggestions"].iteritems():
-                                        second_word.append = sug
+                                        second_word.append(sug)
                                 else:
-                                    second_word.append = second_value
+                                    second_word.append(second_value)
+
                                 if(self.words[tweet_id][third_value]["suggestions"]):
                                     for sug, scr in self.words[tweet_id][third_value]["suggestions"].iteritems():
-                                        third_word.append = sug
+                                        third_word.append(sug)
                                 else:
-                                    third_word.append = third_value
+                                    third_word.append(third_value)
+
                                 if(self.words[tweet_id][fourth_value]["suggestions"]):
                                     for sug, scr in self.words[tweet_id][fourth_value]["suggestions"].iteritems():
-                                        fourth_word.append = sug
+                                        fourth_word.append(sug)
                                 else:
-                                    fourth_word.append = fourth_value
+                                    fourth_word.append(fourth_value)
+
                                 score, best_fword = self.addBigram(first_word, second_word, weights[1], score)
                                 score, best_fword = self.addTrigram(best_fword, second_word, third_word, weights[2], score)
                                 score, best_fword = self.addTetragram(best_fword, second_word, third_word, fourth_word, weights[3], score)
                                 
                                 self.corrected[tweet_id]['weight_index'] = we_index
-                                self.corrected[tweet_id]["words"][w] = best_fword
+                                self.corrected[tweet_id]['words'][word] = best_fword
 
     def calculateScore(self, scores, weights):
         return scores['Levensthein']*weights[0] + scores['Phonetic']*weights[4]
@@ -299,12 +304,10 @@ class GeneticAlgorithm(object):
             if(len(words) == 3):
                 if(len(tweet) and tweet.get(words[0]) and tweet[words[0]] == words[2]):
                     n_corrected += 1 
+                n_words += 1
             else:
                 if(self.corrected.get(words[0])):
-                    tweet = self.corrected[words[0]]
-                else:
-                    tweet = {}
-            n_words += 1
+                    tweet = self.corrected[words[0]]['words']
 
 def correct_words(aspell, spellchecker, words, add_to_dict=[]):
 
@@ -482,93 +485,6 @@ def make_transcription(words):
                 perl_script_2 =  subprocess.Popen(["perl", "transcriptor.pl",suggestion], stdin=PIPE, stdout=PIPE, stderr=PIPE)
                 words[tweet_id][word]["suggestions"][suggestion]['Phonetic'] = WagnerFischer(transform_word, perl_script_2.communicate()[0]).cost
 
-def add_2_gram_percentage(words, sentence):
-
-    with open('files/2gram.txt', 'r') as lm_file:
-        lm = lm_file.readlines()
-
-    n_words = 0
-    pairs = sentence.split(' ')
-    pairs = [w.translate(None, ''.join(['\n', '.', '!', '?'])) for w in pairs]
-
-    first_value = words[pairs[0]]
-    for index, w in enumerate(pairs):
-        if index + 1 > len(pairs) - 1:
-            break
-        second_value = words[pairs[index+1]]
-        key = pairs[index]
-        for s_key, s_score in second_value.iteritems():
-            if(s_key != 'status'):
-                for f_key, f_score in first_value.iteritems():
-                    if(f_key != 'status'):
-                        for line in lm:
-                            line = line.replace('\n', '').split(' ')
-                            if (line[1] == f_key and line[2] == s_key):
-                                words[key][f_key]['2gram'] = pow(10, float(line[0]))
-                                break
-        first_value = second_value
-
-def add_3_gram_percentage(words, sentence):
-
-    with open('files/3gram.txt', 'r') as lm_file:
-        lm = lm_file.readlines()
-
-    n_words = 0
-    pairs = sentence.split(' ')
-    pairs = [w.translate(None, ''.join(['\n', '.', '!', '?'])) for w in pairs]
-
-    first_value = words[pairs[0]]
-    for index, w in enumerate(pairs):
-        if index + 2 > len(pairs) - 1:
-            break
-        second_value = words[pairs[index+1]]
-        third_value = words[pairs[index+2]]
-        key = pairs[index]
-        for t_key,  t_score in third_value.iteritems():
-            if(t_key != 'status'):
-                for s_key, s_score in second_value.iteritems():
-                    if(s_key != 'status'):
-                        for f_key, f_score in first_value.iteritems():
-                            if(f_key != 'status'):
-                                for line in lm:
-                                    line = line.replace('\n', '').split(' ')
-                                    if (line[1] == f_key and line[2] == s_key and line[3] == t_key):
-                                        words[key][f_key]['3gram'] = pow(10, float(line[0]))
-                                        break
-        first_value = second_value
-
-def add_4_gram_percentage(words, sentence):
-
-    with open('files/4gram.txt', 'r') as lm_file:
-        lm = lm_file.readlines()
-
-    n_words = 0
-    pairs = sentence.split(' ')
-    pairs = [w.translate(None, ''.join(['\n', '.', '!', '?'])) for w in pairs]
-
-    first_value = words[pairs[0]]
-    for index, w in enumerate(pairs):
-        if index + 3 > len(pairs) - 1:
-            break
-        second_value = words[pairs[index+1]]
-        third_value = words[pairs[index+2]]
-        fourth_value = words[pairs[index+3]]
-        key = pairs[index]
-        for fourth_key, fourth_score in fourth_value.iteritems():
-            if(fourth_key != 'status'):
-                for third_key,  third_score in third_value.iteritems():
-                    if(third_key != 'status'):
-                        for second_key, second_score in second_value.iteritems():
-                            if(second_key != 'status'):
-                                for first_key, first_score in first_value.iteritems():
-                                    if(first_key != 'status'):
-                                        for line in lm:
-                                            line = line.replace('\n', '').split(' ')
-                                            if (line[1] == first_key and line[2] == second_key and line[3] == third_key and line[4] == fourth_key):
-                                                words[key][first_key]['4gram'] = pow(10, float(line[0]))
-                                                break
-        first_value = second_value
-
 def print_words(words):
     for tweet_id, tweets_info in words.iteritems():
         print "ID: " + tweet_id
@@ -593,23 +509,22 @@ if __name__ == "__main__":
         if(info[3] != "Not Available"):
             tweets[info[0]] = info[3]
             sentences[info[0]] = info[3]
-            print "index: " + str(index) + " " + info[3]
 
-    words = to_dictionary(tweets[56])
+    words = to_dictionary(tweets)
 
-    # find_capitals(words)
-    # find_gentilicis(words)
-    # find_titles(words)
-    # find_forenames(words)
-    # find_acronimos(words)
-    # find_abreviaturas(words)
-    # find_person_names(words)
+    #find_capitals(words)
+    #find_gentilicis(words)
+    #find_titles(words)
+    #find_forenames(words)
+    #find_acronimos(words)
+    #find_abreviaturas(words)
+    #find_person_names(words)
 
     correct_words(aspell, spellchecker, words)
     add_levensthein_cost(words)
     make_transcription(words)
     #print_words(words)
+    
     #sudo ./ngram-count -text input.txt -order 4 -addsmooth 0 -lm 4gram.lm
-
 
     GeneticAlgorithm(words, sentences)
