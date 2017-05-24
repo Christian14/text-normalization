@@ -126,23 +126,25 @@ class GeneticAlgorithm(object):
         self.words = words
         self.sentences = sentences
         self.weights = []
-        self.population = 100
+        self.population = 1
         self.scores = []
         self.corrected = {}
         self.answers = {}
 
         self.generatePopulation()
 
-        for i in range(100):
+        for i in range(2):
             self.addScores()
             self.calculateFitness()
             self.selectionReproduction()
             self.mutation()
 
     def selectionReproduction(self):
-        for index, weights in self.weights:
+        for index, weights in enumerate(self.weights):
             if(index+1 < len(self.weights)):
-                alpha = round(random.random()*5)
+                alpha = int(round(random.random()*5))
+                if alpha >= 5:
+                    alpha = 4
                 beta = random.random()
                 element_one = weights[alpha]
                 element_two = self.weights[index+1][alpha]
@@ -152,10 +154,11 @@ class GeneticAlgorithm(object):
                 self.weights[index+1][alpha] = new_two
 
     def mutation(self):
-        for index, weights in self.weights:
-            alpha = round(random.random()*5)
+        for index, weights in enumerate(self.weights):
+            alpha = int(round(random.random()*5))
+            if alpha >= 5:
+                alpha = 4
             self.weights[index][alpha] = random.random()
-
 
     def generatePopulation(self):
         for i in range(self.population):
@@ -171,87 +174,113 @@ class GeneticAlgorithm(object):
             sentence = self.sentences[tweet_id]
             sentence = sentence.split(' ')
             sentence = [w.translate(None, ''.join(special_characters)) for w in sentence]
-            for word, word_info in tweets_info.iteritems():
-                #print "Word: " + word
-                #print "Status" + str(word_info["status"])
-                for suggestion, scores in word_info["suggestions"].iteritems(): #Sugerencias y sus pesos
-                    #print "Suggestion: " + suggestion
-                    #print "Scores: " + str(scores)
-                    max_score = 0
-                    for index, w in enumerate(sentence):
-                        self.corrected[tweet_id] = {"words": {}, 'weight_index': 0}
-
-                    for index, word in enumerate(sentence):
-                        if index < len(sentence):
-                            first_value = sentence[index]
+            for we_index, weights in enumerate(self.weights):
+                self.corrected[we_index] = {"tweets": {}, "fitness": 0}
+                self.corrected[we_index]["tweets"][tweet_id] = {}
+                score = 0
+                for index, word in enumerate(sentence):
+                    first_word = []
+                    second_word = []
+                    third_word = []
+                    fourth_word = []
+                    if index < len(sentence):
+                        first_value = sentence[index]
+                    else:
+                        first_value = ""
+                    if index + 1 < len(sentence):
+                        second_value = sentence[index+1]
+                    else:
+                        second_value = ""
+                    if index + 2 < len(sentence):
+                        third_value = sentence[index+2]
+                    else:
+                        third_value = ""
+                    if index + 3 < len(sentence):
+                        fourth_value = sentence[index+3]
+                    else:
+                        fourth_value = ""
+                    if(len(first_value) > 0 and len(second_value) > 0 and first_value[0] != "@" and second_value[0] != "@" and first_value[0] != "#" and second_value[0] != "#"):
+                    
+                        if(len(first_value) > 0 and self.words[tweet_id][first_value]["suggestions"]):
+                            if(len(self.words[tweet_id][first_value]["suggestions"]) < 1 ):
+                                first_word.append = first_value
+                            else:
+                                for sug, scr in self.words[tweet_id][first_value]["suggestions"].iteritems():
+                                    first_word.append(sug)
                         else:
-                            first_value = ""
-                        if index + 1 < len(sentence):
-                            second_value = sentence[index+1]
+                            first_word.append(first_value)
+
+                        if(len(second_value) > 0 and self.words[tweet_id][second_value]["suggestions"]):
+                            if(len(self.words[tweet_id][second_value]["suggestions"]) < 1 ):
+                                second_word.append = second_value
+                            else:
+                                for sug, scr in self.words[tweet_id][second_value]["suggestions"].iteritems():
+                                    second_word.append(sug)
                         else:
-                            second_value = ""
-                        if index + 2 < len(sentence):
-                            third_value = sentence[index+2]
+                            second_word.append(second_value)
+
+                        if(len(third_value) > 0 and self.words[tweet_id][third_value]["suggestions"]):
+                            if(len(self.words[tweet_id][third_value]["suggestions"]) < 1 ):
+                                third_word.append = third_value
+                            else:
+                                for sug, scr in self.words[tweet_id][third_value]["suggestions"].iteritems():
+                                    third_word.append(sug)
                         else:
-                            third_value = ""
-                        if index + 3 < len(sentence):
-                            fourth_value = sentence[index+3]
+                            third_word.append(third_value)
+
+                        if(len(fourth_value) > 0 and self.words[tweet_id][fourth_value]["suggestions"]):
+                            if(len(self.words[tweet_id][fourth_value]["suggestions"]) < 1 ):
+                                fourth_word.append = fourth_value
+                            else:
+                                for sug, scr in self.words[tweet_id][fourth_value]["suggestions"].iteritems():
+                                    fourth_word.append(sug)
                         else:
-                            fourth_value = ""
+                            fourth_word.append(fourth_value)
 
-                        if(len(first_value) > 0 and len(second_value) > 0 and first_value[0] != "@" and second_value[0] != "@" and first_value[0] != "#" and second_value[0] != "#"):
-                            score = 0
-                            first_word = []
-                            second_word = []
-                            third_word = []
-                            fourth_word = []
-                            for we_index, weights in enumerate(self.weights):
-                                score = self.calculateScore(scores, weights)
-                                if(self.words[tweet_id][first_value]["suggestions"]):
-                                    for sug, scr in self.words[tweet_id][first_value]["suggestions"].iteritems():
-                                        first_word.append(sug)
-                                else:
-                                    first_word.append(first_value)
+                        #print "Palabra: " + str(first_value)
+                        #print "Sugerencias: " + str(first_word)
 
-                                if(self.words[tweet_id][second_value]["suggestions"]):
-                                    for sug, scr in self.words[tweet_id][second_value]["suggestions"].iteritems():
-                                        second_word.append(sug)
-                                else:
-                                    second_word.append(second_value)
+                        score, best_fword = self.addBigram(first_word, second_word, weights, self.words[tweet_id][first_value]["suggestions"])
+                        if len(best_fword) > 0:
+                            first_word[0] = best_fword
+                        else:
+                            max_scr = -1
+                            if(len(self.words[tweet_id][first_value]["suggestions"]) < 1 ):
+                                best_fword = first_value
+                            else:
+                                for ind, fw_sug in enumerate(first_word):
+                                    scr = 0
+                                    calculated_word = self.words[tweet_id][first_value]["suggestions"][fw_sug]
+                                    scr = self.calculateScore(calculated_word, weights)
+                                    if(scr > max_scr):
+                                        first_word = [fw_sug]
+                                        best_fword = fw_sug
 
-                                if(self.words[tweet_id][third_value]["suggestions"]):
-                                    for sug, scr in self.words[tweet_id][third_value]["suggestions"].iteritems():
-                                        third_word.append(sug)
-                                else:
-                                    third_word.append(third_value)
+                        self.corrected[we_index]["tweets"][tweet_id][word] = best_fword
 
-                                if(self.words[tweet_id][fourth_value]["suggestions"]):
-                                    for sug, scr in self.words[tweet_id][fourth_value]["suggestions"].iteritems():
-                                        fourth_word.append(sug)
-                                else:
-                                    fourth_word.append(fourth_value)
+                        score, best_fword = self.addTrigram(first_word, second_word, third_word, weights[2], score)
 
-                                score, best_fword = self.addBigram(first_word, second_word, weights[1], score)
-                                score, best_fword = self.addTrigram(best_fword, second_word, third_word, weights[2], score)
-                                score, best_fword = self.addTetragram(best_fword, second_word, third_word, fourth_word, weights[3], score)
-                                
-                                self.corrected[tweet_id]['weight_index'] = we_index
-                                self.corrected[tweet_id]['words'][word] = best_fword
+                        if len(best_fword) > 0:
+                            first_word[0] = best_fword
+                        else:
+                            first_word = [first_word[0]]
+
+                        score, best_fword = self.addTetragram(first_word, second_word, third_word, fourth_word, weights[3], score)
 
     def calculateScore(self, scores, weights):
         return scores['Levensthein']*weights[0] + scores['Phonetic']*weights[4]
 
-    def addBigram(self, fwords, swords, weight, current_score):
+    def addBigram(self, fwords, swords, weights, word_scores):
         with open('files/2gram.txt', 'r') as lm_file:
             lm = lm_file.readlines()
         best_fword = ""
-        max_score = 0
+        max_score = -10000
         for f_word in fwords:
             for s_word in swords:
                 for line in lm:
                     line = line.replace('\n', '').split(' ')
                     if (line[1] == f_word and line[2] == s_word):
-                        score = weight*pow(10, float(line[0])) + current_score
+                        score = weights[1]*pow(10, float(line[0])) + self.calculateScore(word_scores[f_word], weights)
                         if(score > max_score):
                             max_score = score
                             best_fword = f_word
@@ -261,7 +290,7 @@ class GeneticAlgorithm(object):
         with open('files/3gram.txt', 'r') as lm_file:
             lm = lm_file.readlines()
         best_fword = ""
-        max_score = 0
+        max_score = -10000
         for f_word in fwords:
             for s_word in swords:
                 for t_word in twords:
@@ -278,7 +307,7 @@ class GeneticAlgorithm(object):
         with open('files/4gram.txt', 'r') as lm_file:
             lm = lm_file.readlines()
         best_fword = ""
-        max_score = 0
+        max_score = -10000
         for f_word in fwords:
             for s_word in swords:
                 for t_word in twords:
@@ -299,15 +328,23 @@ class GeneticAlgorithm(object):
         n_corrected = 0
         n_words = 0
 
-        for index, line in enumerate(tweets_info):
-            words = line.replace('\n', '').replace('\t', '').replace('\r','').split(' ')
-            if(len(words) == 3):
-                if(len(tweet) and tweet.get(words[0]) and tweet[words[0]] == words[2]):
-                    n_corrected += 1 
-                n_words += 1
-            else:
-                if(self.corrected.get(words[0])):
-                    tweet = self.corrected[words[0]]['words']
+        for ind_weight, weights in enumerate(self.weights):
+            for index, line in enumerate(tweets_info):
+                words = line.replace('\n', '').replace('\t', '').replace('\r','').split(' ')
+
+                if(len(words) == 3):
+                    print "Palabra Oracion Corregida:" + str(words[2])
+                    print "Palabra Corregida Script:" + str(tweet[words[0]])
+                    if(len(tweet) > 0 and tweet.get(words[0]) and tweet[words[0]].lower() == words[2].lower()):
+                        n_corrected += 1 
+                    n_words += 1
+                else:
+                    tweet = self.corrected[ind_weight]["tweets"][words[0]]
+                    print "Tweet Corregido:" + str(tweet)
+            self.corrected[ind_weight]["fitness"] = n_corrected/n_words
+
+            print "Correctas: " + str(n_corrected)
+            print "Palabras: " + str(n_words)
 
 def correct_words(aspell, spellchecker, words, add_to_dict=[]):
 
