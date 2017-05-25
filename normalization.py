@@ -123,7 +123,7 @@ class WagnerFischer(object):
 
 class GeneticAlgorithm(object):
 
-    def __init__(self, words, sentences):
+    def __init__(self, words, sentences, not_available, available):
         self.words = words
         self.sentences = sentences
         self.weights = []
@@ -131,6 +131,8 @@ class GeneticAlgorithm(object):
         self.scores = []
         self.corrected = {}
         self.answers = {}
+        self.not_available = not_available
+        self.available = available
 
         self.generatePopulation()
 
@@ -169,48 +171,54 @@ class GeneticAlgorithm(object):
     def generatePopulation(self):
         for i in range(self.population):
             weights = []
+            self.corrected[i] = {}
             for i in range(5):
                 weights.append(random.random())
             self.weights.append(weights)
 
     def addScores(self):
-        special_characters = ['.', ',', '!', '?','\n','\t', ';', '*', '/', '&', '"','=','$', '(', ')','|', ':']
+        special_characters = [',','\n','\t', ';', '*', '/', '&', '"','=','$', '(', ')','|']
         for tweet_id, tweets_info in self.words.iteritems():
+            print "ID:" + tweet_id
             sentence = self.sentences[tweet_id]
-            sentence = sentence.split(' ')
+            sentence = sentence.replace("?"," ").replace("!"," ").replace("."," ").replace(":"," ").split(' ')
             sentence = [w.translate(None, ''.join(special_characters)) for w in sentence]
+            sentence = filter(None, sentence)
+            #print str(self.words[tweet_id])
             for we_index, weights in enumerate(self.weights):
-                self.corrected[we_index] = {"fitness": 0}
+                self.corrected[we_index]["fitness"] = 0
                 self.corrected[we_index][tweet_id] = {}
                 for index, word in enumerate(sentence):
                     current_word_suggestions = []
-
-                    if(self.words[tweet_id][word]["status"] != 1):
-                        score = 0
-                        if(index == 0):
-                            max_score = -1
-                            for sug, scores in self.words[tweet_id][word]["suggestions"].iteritems():
-                                score = self.calculateScore(scores, weights)
-                                if(score > max_score):
-                                    print "Score: "+ str(score) + "Palabra: " + sug
-                                    self.corrected[we_index][tweet_id][word] = sug
-                                    max_score = score
+                    if(len(word) > 0 and word in self.words[tweet_id]):
+                        if(self.words[tweet_id][word]["status"] != 1):
+                            score = 0
+                            if(index == 0):
+                                max_score = -1
+                                for sug, scores in self.words[tweet_id][word]["suggestions"].iteritems():
+                                    score = self.calculateScore(scores, weights)
+                                    if(score > max_score):
+                                        print "Score: "+ str(score) + "Palabra: " + sug
+                                        self.corrected[we_index][tweet_id][word] = sug
+                                        max_score = score
+                            else:
+                                max_score = -1
+                                prev_word = self.corrected[we_index][tweet_id][sentence[index-1]]
+                                for sug, scores in self.words[tweet_id][word]["suggestions"].iteritems():
+                                    score = self.calculateScore(scores, weights)
+                                    score += self.addBigram(prev_word, sug, weights[1])
+                                    if(index > 1):
+                                        prev_prev_word = self.corrected[we_index][tweet_id][sentence[index-2]]
+                                        score += self.addTrigram(prev_prev_word, prev_word, sug, weights[2])
+                                    if(index > 2):
+                                        prev_prev_prev_word = self.corrected[we_index][tweet_id][sentence[index-3]]
+                                        score += self.addTetragram(prev_prev_prev_word, prev_prev_word, prev_word, sug, weights[3])
+                                    if(score > max_score):
+                                        #print "Score: "+ str(score) + "Palabra: " + sug
+                                        self.corrected[we_index][tweet_id][word] = sug
+                                        max_score = score
                         else:
-                            max_score = -1
-                            prev_word = self.corrected[we_index][tweet_id][sentence[index-1]]
-                            for sug, scores in self.words[tweet_id][word]["suggestions"].iteritems():
-                                score = self.calculateScore(scores, weights)
-                                score += self.addBigram(prev_word, sug, weights[1])
-                                if(index > 1):
-                                    prev_prev_word = self.corrected[we_index][tweet_id][sentence[index-2]]
-                                    score += self.addTrigram(prev_prev_word, prev_word, sug, weights[2])
-                                if(index > 2):
-                                    prev_prev_prev_word = self.corrected[we_index][tweet_id][sentence[index-3]]
-                                    score += self.addTetragram(prev_prev_prev_word, prev_prev_word, prev_word, sug, weights[3])
-                                if(score > max_score):
-                                    print "Score: "+ str(score) + "Palabra: " + sug
-                                    self.corrected[we_index][tweet_id][word] = sug
-                                    max_score = score
+                            self.corrected[we_index][tweet_id][word] = word
                     else:
                         self.corrected[we_index][tweet_id][word] = word
 
@@ -257,8 +265,7 @@ class GeneticAlgorithm(object):
         for ind_weight, weights in enumerate(self.weights):
             for index, line in enumerate(tweets_info):
                 words = line.replace('\n', '').replace('\t', '').replace('\r','').split(' ')
-
-                if(len(words) == 3):
+                if(len(words) == 3 and evaluate):
                     print "Palabra corregida: " + words[2]
                     print "Palabra de la oracion: " + words[0]
                     print "Palabra corregida por script: " + tweet[words[0]]
@@ -267,7 +274,11 @@ class GeneticAlgorithm(object):
                         n_corrected += 1
                     n_words += 1
                 else:
-                    tweet = self.corrected[ind_weight][words[0]]
+                    if(words[0] in self.not_available):
+                        evaluate = False
+                    if(words[0] in self.available):
+                        tweet = self.corrected[ind_weight][words[0]]
+                        evaluate = True
             print "Corregidos:" + str(n_corrected)
             print "Total:" + str(n_words)
             self.corrected[ind_weight]["fitness"] = n_corrected/n_words
@@ -303,14 +314,15 @@ def correct_words(aspell, spellchecker, words, add_to_dict=[]):
 def to_dictionary(tweets):
     dictionary = {}
     for key, tweet in tweets.iteritems():
-        words = tweet.split(' ')
-        special_characters = ['.', ',', '!', '?','\n','\t', ';', '*', '/', '&', '"','=','$', '(', ')','|', ':']
+        words = tweet.replace("?", " ").replace("!", " ").split(' ')
+        special_characters = ['.', ',','\n','\t', ';', '*', '/', '&', '"','=','$', '(', ')','|', ':']
         info = {}
         for word in words:
-            if(word[0]) != "@" and word[0] != "#":
-                info[word.translate(None, ''.join(special_characters))] = {"status": 0, "suggestions": {}}
-            else:
-                info[word] = {"status": 1, "suggestions": {}}
+            if(len(word) > 0):
+                if(word[0]) != "@" and word[0] != "#":
+                    info[word.translate(None, ''.join(special_characters))] = {"status": 0, "suggestions": {}}
+                else:
+                    info[word] = {"status": 1, "suggestions": {}}
         dictionary[key] = info
 
     return dictionary
@@ -457,13 +469,18 @@ if __name__ == "__main__":
 
     tweets = {}
     sentences = {}
-
+    not_available = []
+    available = []
+    
     for index,tweet in enumerate(tweets_info):
         info = tweet.split('\t')
         info[3] = info[3].replace("\n","")
         if(info[3] != "Not Available"):
             tweets[info[0]] = info[3]
             sentences[info[0]] = info[3]
+            available.append(info[0])
+        else:
+            not_available.append(info[0])
 
     words = to_dictionary(tweets)
 
@@ -481,4 +498,4 @@ if __name__ == "__main__":
     
     #sudo ./ngram-count -text input.txt -order 4 -addsmooth 0 -lm 4gram.lm
 
-    GeneticAlgorithm(words, sentences)
+    GeneticAlgorithm(words, sentences, not_available, available)
