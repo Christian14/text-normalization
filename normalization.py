@@ -183,66 +183,67 @@ class GeneticAlgorithm(object):
                     second_word = []
                     third_word = []
                     fourth_word = []
-                    if index < len(sentence):
+                    if index < len(sentence) and len(sentence[index]) > 0 and sentence[index][0] not in ["@", "#"]:
                         first_value = sentence[index]
                     else:
                         first_value = ""
-                    if index + 1 < len(sentence):
+
+                    if index + 1 < len(sentence) and len(sentence[index+1]) > 0 and sentence[index+1][0] not in ["@", "#"]:
                         second_value = sentence[index+1]
                     else:
                         second_value = ""
-                    if index + 2 < len(sentence):
+
+                    if index + 2 < len(sentence) and len(sentence[index+2]) > 0 and sentence[index+2][0] not in ["@", "#"]:
                         third_value = sentence[index+2]
                     else:
                         third_value = ""
-                    if index + 3 < len(sentence):
+
+                    if index + 3 < len(sentence) and len(sentence[index+3]) > 0 and sentence[index+3][0] not in ["@", "#"]:
                         fourth_value = sentence[index+3]
                     else:
                         fourth_value = ""
-                    if(len(first_value) > 0 and len(second_value) > 0 and first_value[0] != "@" and second_value[0] != "@" and first_value[0] != "#" and second_value[0] != "#"):
                     
-                        if(len(first_value) > 0 and self.words[tweet_id][first_value]["suggestions"]):
-                            if(len(self.words[tweet_id][first_value]["suggestions"]) < 1 ):
-                                first_word.append = first_value
-                            else:
-                                for sug, scr in self.words[tweet_id][first_value]["suggestions"].iteritems():
-                                    first_word.append(sug)
+                    if(len(first_value) > 0 and self.words[tweet_id][first_value]["suggestions"]):
+                        if(len(self.words[tweet_id][first_value]["suggestions"]) < 1 ):
+                            first_word.append = first_value
                         else:
-                            first_word.append(first_value)
+                            for sug, scr in self.words[tweet_id][first_value]["suggestions"].iteritems():
+                                first_word.append(sug)
+                    else:
+                        first_word.append(first_value)
 
-                        if(len(second_value) > 0 and self.words[tweet_id][second_value]["suggestions"]):
-                            if(len(self.words[tweet_id][second_value]["suggestions"]) < 1 ):
-                                second_word.append = second_value
-                            else:
-                                for sug, scr in self.words[tweet_id][second_value]["suggestions"].iteritems():
-                                    second_word.append(sug)
+                    if(len(second_value) > 0 and self.words[tweet_id][second_value]["suggestions"]):
+                        if(len(self.words[tweet_id][second_value]["suggestions"]) < 1 ):
+                            second_word.append = second_value
                         else:
-                            second_word.append(second_value)
+                            for sug, scr in self.words[tweet_id][second_value]["suggestions"].iteritems():
+                                second_word.append(sug)
+                    else:
+                        second_word.append(second_value)
 
-                        if(len(third_value) > 0 and self.words[tweet_id][third_value]["suggestions"]):
-                            if(len(self.words[tweet_id][third_value]["suggestions"]) < 1 ):
-                                third_word.append = third_value
-                            else:
-                                for sug, scr in self.words[tweet_id][third_value]["suggestions"].iteritems():
-                                    third_word.append(sug)
+                    if(len(third_value) > 0 and self.words[tweet_id][third_value]["suggestions"]):
+                        if(len(self.words[tweet_id][third_value]["suggestions"]) < 1 ):
+                            third_word.append = third_value
                         else:
-                            third_word.append(third_value)
+                            for sug, scr in self.words[tweet_id][third_value]["suggestions"].iteritems():
+                                third_word.append(sug)
+                    else:
+                        third_word.append(third_value)
 
-                        if(len(fourth_value) > 0 and self.words[tweet_id][fourth_value]["suggestions"]):
-                            if(len(self.words[tweet_id][fourth_value]["suggestions"]) < 1 ):
-                                fourth_word.append = fourth_value
-                            else:
-                                for sug, scr in self.words[tweet_id][fourth_value]["suggestions"].iteritems():
-                                    fourth_word.append(sug)
+                    if(len(fourth_value) > 0 and self.words[tweet_id][fourth_value]["suggestions"]):
+                        if(len(self.words[tweet_id][fourth_value]["suggestions"]) < 1 ):
+                            fourth_word.append = fourth_value
                         else:
-                            fourth_word.append(fourth_value)
+                            for sug, scr in self.words[tweet_id][fourth_value]["suggestions"].iteritems():
+                                fourth_word.append(sug)
+                    else:
+                        fourth_word.append(fourth_value)
 
-                        #print "Palabra: " + str(first_value)
-                        #print "Sugerencias: " + str(first_word)
-
+                    best_fword = ""
+                    if(len(first_value) > 0):
                         score, best_fword = self.addBigram(first_word, second_word, weights, self.words[tweet_id][first_value]["suggestions"])
                         if len(best_fword) > 0:
-                            first_word[0] = best_fword
+                            first_word = [best_fword]
                         else:
                             max_scr = -1
                             if(len(self.words[tweet_id][first_value]["suggestions"]) < 1 ):
@@ -257,9 +258,7 @@ class GeneticAlgorithm(object):
                                         best_fword = fw_sug
 
                         self.corrected[we_index]["tweets"][tweet_id][word] = best_fword
-
                         score, best_fword = self.addTrigram(first_word, second_word, third_word, weights[2], score)
-
                         if len(best_fword) > 0:
                             first_word[0] = best_fword
                         else:
@@ -549,13 +548,13 @@ if __name__ == "__main__":
 
     words = to_dictionary(tweets)
 
-    #find_capitals(words)
-    #find_gentilicis(words)
-    #find_titles(words)
-    #find_forenames(words)
-    #find_acronimos(words)
-    #find_abreviaturas(words)
-    #find_person_names(words)
+    find_capitals(words)
+    find_gentilicis(words)
+    find_titles(words)
+    find_forenames(words)
+    find_acronimos(words)
+    find_abreviaturas(words)
+    find_person_names(words)
 
     correct_words(aspell, spellchecker, words)
     add_levensthein_cost(words)
