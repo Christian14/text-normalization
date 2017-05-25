@@ -450,16 +450,6 @@ def make_transcription(words):
                 perl_script_2 =  subprocess.Popen(["perl", "transcriptor.pl",suggestion], stdin=PIPE, stdout=PIPE, stderr=PIPE)
                 words[tweet_id][word]["suggestions"][suggestion]['Phonetic'] = WagnerFischer(transform_word, perl_script_2.communicate()[0]).cost
 
-def print_words(words):
-    for tweet_id, tweets_info in words.iteritems():
-        print "ID: " + tweet_id
-        for word, word_info in tweets_info.iteritems():
-            print "Word: " + word
-            for status, suggestion in word_info.iteritems():
-                print "Status: " + status
-                print "Suggestion: " + str(suggestion)
-
-
 if __name__ == "__main__":
 
     with open('files/tweets_dev100.txt', 'r') as tweets_file:
@@ -488,7 +478,6 @@ if __name__ == "__main__":
     correct_words(aspell, spellchecker, words)
     add_levensthein_cost(words)
     make_transcription(words)
-    #print_words(words)
     
     #sudo ./ngram-count -text input.txt -order 4 -addsmooth 0 -lm 4gram.lm
 
