@@ -560,6 +560,6 @@ if __name__ == "__main__":
     #         for sug, scr in words_info["suggestions"].iteritems():
     #             print sug
 
-    #sudo ./ngram-count -text input.txt -order 4 -addsmooth 0 -lm 4gram.lm
+    #SRILM sudo ./ngram-count -text input.txt -order 4 -addsmooth 0 -lm 4gram.lm
 
     GeneticAlgorithm(words, sentences, not_available, available)
