@@ -142,7 +142,7 @@ class GeneticAlgorithm(object):
         self.storeTrigram()
         self.storeTetragram()
 
-        for i in range(100):
+        for i in range(2):
             self.addScores()
             self.calculateFitness()
             self.selectionReproduction()
@@ -257,31 +257,37 @@ class GeneticAlgorithm(object):
                     if(len(word) > 0 and word in self.words[tweet_id]):
                         if(self.words[tweet_id][word]["status"] != 1):
                             score = 0
-                            #print "Palabra: " + word
+                            print "Palabra: " + word
                             if(index == 0):
                                 max_score = -1
                                 for sug, scores in self.words[tweet_id][word]["suggestions"].iteritems():
                                     score = self.calculateScore(scores, weights)
+                                    print "Sugerencia: " + sug
+                                    print "Score LevenstheinC y Fonema: "+ str(score) + "\n"
                                     if(score > max_score):
                                         self.corrected[we_index][tweet_id][word] = sug
                                         max_score = score
-                                    #print "Score: "+ str(score) + "- Sugerencia: " + sug
                             else:
                                 max_score = -1
                                 prev_word = self.corrected[we_index][tweet_id][sentence[index-1]]
                                 for sug, scores in self.words[tweet_id][word]["suggestions"].iteritems():
                                     score = self.calculateScore(scores, weights)
+                                    print "Sugerencia: " + sug
+                                    print "Score LevenstheinC y Fonema: "+ str(score) 
                                     score += self.addBigram(prev_word, sug, weights[1])
+                                    print "Plus Bigram Score: "+ str(score)
                                     if(index > 1):
                                         prev_prev_word = self.corrected[we_index][tweet_id][sentence[index-2]]
                                         score += self.addTrigram(prev_prev_word, prev_word, sug, weights[2])
+                                        print "Plus Trigram Score: "+ str(score)
                                     if(index > 2):
                                         prev_prev_prev_word = self.corrected[we_index][tweet_id][sentence[index-3]]
                                         score += self.addTetragram(prev_prev_prev_word, prev_prev_word, prev_word, sug, weights[3])
+                                        print "Plus Tetragram Score: "+ str(score)
                                     if(score > max_score):
                                         self.corrected[we_index][tweet_id][word] = sug
                                         max_score = score
-                                    #print "Score: "+ str(score) + "- Sugerencia: " + sug
+                                    print "\n"
                         else:
                             self.corrected[we_index][tweet_id][word] = word
                     else:
