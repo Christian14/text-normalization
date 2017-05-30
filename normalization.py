@@ -14,6 +14,7 @@ import subprocess
 from subprocess import Popen, PIPE
 import random
 import operator
+import numpy as np, numpy.random
 
 spellchecker = hunspell.HunSpell('/usr/share/hunspell/es_ES.dic', '/usr/share/hunspell/es_ES.aff')
 
@@ -142,7 +143,7 @@ class GeneticAlgorithm(object):
         self.storeTrigram()
         self.storeTetragram()
 
-        for i in range(2):
+        for i in range(100):
             self.addScores()
             self.calculateFitness()
             self.selectionReproduction()
@@ -180,7 +181,6 @@ class GeneticAlgorithm(object):
                     self.trigram[line[1]][line[2]] = {}
                     self.trigram[line[1]][line[2]][line[3]] = pow(10, float(line[0]))
 
-
     def storeTetragram(self):
         with open('files/4gram.txt', 'r') as lm_file:
             lm = lm_file.readlines()
@@ -206,23 +206,63 @@ class GeneticAlgorithm(object):
                     self.tetragram[line[1]][line[2]][line[3]][line[4]] = pow(10, float(line[0]))
 
     def selectionReproduction(self):
-        fitness_scores = {}
-        for we_index, weights in enumerate(self.weights):
-            fitness_scores[we_index] = self.corrected[we_index]["fitness"]
-        
-        for key, value in sorted(fitness_scores.iteritems(), key=lambda (k,v): (v,k), reverse=True):
+        new_weigths = []
+        while len(new_weigths) == 100:
+            k1 = int((random.random()*100))
+            if(k1 > 99):
+                k1 = 99
+
+            k2 = int((random.random()*100))
+            if(k2 > 99):
+                k2 = 99
+
+            k3 = int((random.random()*100))
+            if(k3 > 99):
+                k3 = 99
+
+            best1 = self.tournament(self.corrected[k1]["fitness"], self.corrected[k2]["fitness"], self.corrected[k3]["fitness"], k1, k2 ,k3) #select the best of two
+
+            k1 = int((random.random()*100))
+            if(k1 > 99):
+                k1 = 99
+
+            k2 = int((random.random()*100))
+            if(k2 > 99):
+                k2 = 99
+
+            k3 = int((random.random()*100))
+            if(k3 > 99):
+                k3 = 99
+
+            best2 = self.tournament(self.corrected[k1]["fitness"], self.corrected[k2]["fitness"], self.corrected[k3]["fitness"], k1, k2 ,k3)
+
             alpha = int(round(random.random()*5))
-            if alpha >= 5:
+            if alpha > 4:
                 alpha = 4
-            if(key + 1 >= len(self.weights)):
-                break
             beta = random.random()
-            element_one = self.weights[key][alpha]
-            element_two = self.weights[key+1][alpha]
+            element_one = best1[alpha]
+            element_two = best2[alpha]
             new_one = element_one - beta*(element_one - element_two)
             new_two = element_two + beta*(element_one - element_two)
-            self.weights[key][alpha] = new_one
-            self.weights[key+1][alpha] = new_two
+            best1[alpha] = new_one
+            best2[alpha] = new_two
+
+            new_weigths.append(best1)
+            new_weigths.append(best2)
+
+        self.weights = new_weigths
+
+    def tournament(first, second, third, k1, k2 ,k3):
+        if(first > second):
+            if(first > third):
+                return self.weights[k1]
+            else:
+                return self.weights[k3]
+        else:
+            if(second > third):
+                return self.weights[k2]
+            else:
+                return self.weights[k3]
 
     def mutation(self):
         for index, weights in enumerate(self.weights):
@@ -233,23 +273,20 @@ class GeneticAlgorithm(object):
 
     def generatePopulation(self):
         for i in range(self.population):
-            weights = []
             self.corrected[i] = {}
-            for i in range(5):
-                weights.append(random.random())
-            self.weights.append(weights)
+            self.weights.append(np.random.dirichlet(np.ones(5)*1000,size=1)[0])
 
     def addScores(self):
         special_characters = [',','\n','\t', ';', '*', '/', '&', '"','=','$', '(', ')','|']
         for tweet_id, tweets_info in self.words.iteritems():
-            print "ID:" + tweet_id
+            #print "ID:" + tweet_id
             sentence = self.sentences[tweet_id]
             sentence = sentence.replace("?"," ").replace("!"," ").replace("."," ").replace(":"," ").replace('"'," ").split(' ')
             sentence = [w.translate(None, ''.join(special_characters)) for w in sentence]
             sentence = filter(None, sentence)
             #print str(self.words[tweet_id])
             for we_index, weights in enumerate(self.weights):
-                #print "Pesos: " + str(weights)
+                #print "Pesos: " + str(weights) + "\n"
                 self.corrected[we_index]["fitness"] = 0
                 self.corrected[we_index][tweet_id] = {}
                 for index, word in enumerate(sentence):
@@ -257,44 +294,61 @@ class GeneticAlgorithm(object):
                     if(len(word) > 0 and word in self.words[tweet_id]):
                         if(self.words[tweet_id][word]["status"] != 1):
                             score = 0
-                            print "Palabra: " + word
+                            #print "Palabra: " + word
                             if(index == 0):
+                                max_levensthein = -1
+                                max_phonetic = -1
                                 max_score = -1
                                 for sug, scores in self.words[tweet_id][word]["suggestions"].iteritems():
-                                    score = self.calculateScore(scores, weights)
-                                    print "Sugerencia: " + sug
-                                    print "Score LevenstheinC y Fonema: "+ str(score) + "\n"
+                                    if(scores['Levensthein'] > max_levensthein):
+                                        max_levensthein = scores['Levensthein']
+                                    if(scores['Phonetic'] > max_phonetic):
+                                        max_phonetic = scores['Phonetic']
+                                for sug, scores in self.words[tweet_id][word]["suggestions"].iteritems():
+                                    levensthein_score = (max_levensthein - scores['Levensthein'])/max_levensthein
+                                    phonetic_score = (max_phonetic - scores['Levensthein'])/max_phonetic
+                                    score = self.calculateScore(levensthein_score, phonetic_score, weights)
+                                    #print "Score LevenstheinC y Fonema: "+ str(score) + "\n"
                                     if(score > max_score):
                                         self.corrected[we_index][tweet_id][word] = sug
                                         max_score = score
                             else:
+                                max_levensthein = -1
+                                max_phonetic = -1
                                 max_score = -1
+                                for sug, scores in self.words[tweet_id][word]["suggestions"].iteritems():
+                                    if(scores['Levensthein'] > max_levensthein):
+                                        max_levensthein = scores['Levensthein']
+                                    if(scores['Phonetic'] > max_phonetic):
+                                        max_phonetic = scores['Phonetic']
                                 prev_word = self.corrected[we_index][tweet_id][sentence[index-1]]
                                 for sug, scores in self.words[tweet_id][word]["suggestions"].iteritems():
-                                    score = self.calculateScore(scores, weights)
-                                    print "Sugerencia: " + sug
-                                    print "Score LevenstheinC y Fonema: "+ str(score) 
+                                    levensthein_score = (max_levensthein - scores['Levensthein'])/max_levensthein
+                                    phonetic_score = (max_phonetic - scores['Levensthein'])/max_phonetic
+                                    score = self.calculateScore(levensthein_score, phonetic_score, weights)
+                                    #print "Sugerencia: " + sug
+                                    #print "Score LevenstheinC y Fonema: "+ str(score) 
                                     score += self.addBigram(prev_word, sug, weights[1])
-                                    print "Plus Bigram Score: "+ str(score)
+                                    #print "Plus Bigram Score: "+ str(score)
                                     if(index > 1):
                                         prev_prev_word = self.corrected[we_index][tweet_id][sentence[index-2]]
                                         score += self.addTrigram(prev_prev_word, prev_word, sug, weights[2])
-                                        print "Plus Trigram Score: "+ str(score)
+                                        #print "Plus Trigram Score: "+ str(score)
                                     if(index > 2):
                                         prev_prev_prev_word = self.corrected[we_index][tweet_id][sentence[index-3]]
                                         score += self.addTetragram(prev_prev_prev_word, prev_prev_word, prev_word, sug, weights[3])
-                                        print "Plus Tetragram Score: "+ str(score)
+                                        #print "Plus Tetragram Score: "+ str(score)
                                     if(score > max_score):
                                         self.corrected[we_index][tweet_id][word] = sug
                                         max_score = score
-                                    print "\n"
+                                    #print "\n"
                         else:
                             self.corrected[we_index][tweet_id][word] = word
                     else:
                         self.corrected[we_index][tweet_id][word] = word
 
-    def calculateScore(self, scores, weights):
-        return scores['Levensthein']*weights[0] + scores['Phonetic']*weights[4]
+    def calculateScore(self, lev, phon, weights):
+        return lev*weights[0] + phon*weights[4]
 
     def addBigram(self, first_word, second_word, bigram_weight):
         if(self.bigram.has_key(first_word) and self.bigram[first_word].has_key(second_word)):
@@ -318,7 +372,6 @@ class GeneticAlgorithm(object):
         n_corrected = 0
         n_words = 0
 
-        print "*****************************************************************************"
         for ind_weight, weights in enumerate(self.weights):
             for index, line in enumerate(tweets_info):
                 words = line.replace('\n', '').replace('\t', '').replace('\r','').split(' ')
@@ -335,14 +388,13 @@ class GeneticAlgorithm(object):
                         evaluate = False
                     if(words[0] in self.available):
                         tweet = self.corrected[ind_weight][words[0]]
-                        print "Tweet ID: " + words[0]
-                        print "Tweet" + str(tweet)
+                        #print "Tweet ID: " + words[0]
+                        #print "Tweet" + str(tweet)
                         evaluate = True
 
             self.corrected[ind_weight]["fitness"] = n_corrected/n_words
             print "Pesos: " + str(weights) + "- Fitness: " + str(self.corrected[ind_weight]["fitness"]*100)
-            print "Correctos: " + str(n_corrected) + "- Palabras: " + str(n_words)
-            print "*****************************************************************************"
+            #print "Correctos: " + str(n_corrected) + "- Palabras: " + str(n_words)
             n_corrected = 0
             n_words = 0
 
@@ -365,7 +417,7 @@ def correct_words(aspell, spellchecker, words, add_to_dict=[]):
                 suggestions = suggestions_with_repetitions + suggestion_without_repetitions + aspell_suggestion + aspell_suggestion_without_repetitions
                 if suggestions:
                     for suggestion in suggestions:
-                        words[tweet_id][word]["suggestions"][suggestion] = {"Levensthein": 0, "2gram": 0,"3gram": 0, "4gram": 0, "Phonetic": 0} 
+                        words[tweet_id][word]["suggestions"][suggestion] = {"Levensthein": 0, "2gram": 0,"3gram": 0, "4gram": 0, "Phonetic": 0}
                 else:
                     words[tweet_id][word]["status"] = 2
             else:
@@ -553,6 +605,7 @@ if __name__ == "__main__":
     find_acronimos(words)
     find_abreviaturas(words)
     find_person_names(words)
+    find_neologism(words)
 
     words = correct_words(aspell, spellchecker, words)
     add_levensthein_cost(words)
