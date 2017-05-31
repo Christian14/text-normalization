@@ -15,6 +15,7 @@ from subprocess import Popen, PIPE
 import random
 import operator
 import numpy as np, numpy.random
+import re
 
 spellchecker = hunspell.HunSpell('/usr/share/hunspell/es_ES.dic', '/usr/share/hunspell/es_ES.aff')
 
@@ -128,7 +129,7 @@ class GeneticAlgorithm(object):
         self.words = words
         self.sentences = sentences
         self.weights = []
-        self.population = 1000
+        self.population = 100
         self.scores = []
         self.corrected = {}
         self.answers = {}
@@ -137,18 +138,6 @@ class GeneticAlgorithm(object):
         self.bigram = {}
         self.trigram = {}
         self.tetragram = {}
-
-        self.generatePopulation()
-        self.storeBigram()
-        self.storeTrigram()
-        self.storeTetragram()
-
-        for i in range(10000):
-            self.addScores()
-            self.calculateFitness()
-            self.selectionReproduction()
-            self.mutation()
-
 
     def storeBigram(self):
         with open('files/2gram.txt', 'r') as lm_file:
@@ -207,32 +196,32 @@ class GeneticAlgorithm(object):
 
     def selectionReproduction(self):
         new_weigths = []
-        while len(new_weigths) == self.population:
+        while len(new_weigths) != self.population:
             k1 = int((random.random()*self.population))
-            if(k1 > self.population -1):
-                k1 = self.population -1
+            if(k1 > self.population-1):
+                k1 = self.population-1
 
             k2 = int((random.random()*self.population))
-            if(k2 > self.population -1):
-                k2 = self.population -1
+            if(k2 > self.population-1):
+                k2 = self.population-1
 
             k3 = int((random.random()*self.population))
-            if(k3 > self.population -1):
-                k3 = self.population -1
+            if(k3 > self.population-1):
+                k3 = self.population-1
 
             best1 = self.tournament(self.corrected[k1]["fitness"], self.corrected[k2]["fitness"], self.corrected[k3]["fitness"], k1, k2 ,k3) #select the best of two
 
             k1 = int((random.random()*self.population))
-            if(k1 > self.population -1):
-                k1 = self.population -1
+            if(k1 > self.population-1):
+                k1 = self.population-1
 
             k2 = int((random.random()*self.population))
-            if(k2 > self.population -1):
-                k2 = self.population -1
+            if(k2 > self.population-1):
+                k2 = self.population-1
 
             k3 = int((random.random()*self.population))
-            if(k3 > self.population -1):
-                k3 = self.population -1
+            if(k3 > self.population-1):
+                k3 = self.population-1
 
             best2 = self.tournament(self.corrected[k1]["fitness"], self.corrected[k2]["fitness"], self.corrected[k3]["fitness"], k1, k2 ,k3)
 
@@ -252,7 +241,7 @@ class GeneticAlgorithm(object):
 
         self.weights = new_weigths
 
-    def tournament(first, second, third, k1, k2 ,k3):
+    def tournament(self, first, second, third, k1, k2 ,k3):
         if(first > second):
             if(first > third):
                 return self.weights[k1]
@@ -271,7 +260,7 @@ class GeneticAlgorithm(object):
                 alpha = 4
             self.weights[index][alpha] = random.random()
             factor = 1/sum(self.weights[index])
-            for i, weight in enumerate(self.weights):
+            for i, weight in enumerate(self.weights[index]):
                 self.weights[index][i] = factor*self.weights[index][i]
 
     def generatePopulation(self):
@@ -302,7 +291,7 @@ class GeneticAlgorithm(object):
                 for index, word in enumerate(sentence):
                     current_word_suggestions = []
                     if(len(word) > 0 and word in self.words[tweet_id]):
-                        if(self.words[tweet_id][word]["status"] not in [1, 2]):
+                        if(self.words[tweet_id][word]["status"] != 1):
                             score = 0
                             #print "Palabra: " + word
                             if(index == 0):
@@ -353,7 +342,7 @@ class GeneticAlgorithm(object):
                                         max_score = score
                                     #print "\n"
                         else:
-                            self.corrected[we_index][tweet_id][word] = word
+                            self.corrected[we_index][tweet_id][word] = self.words[tweet_id][word]["correct"]
                     else:
                         self.corrected[we_index][tweet_id][word] = word
 
@@ -386,9 +375,9 @@ class GeneticAlgorithm(object):
             for index, line in enumerate(tweets_info):
                 words = line.replace('\n', '').replace('\t', '').replace('\r','').split(' ')
                 if(len(words) == 3 and evaluate):
-                    #print "Palabra corregida: " + words[2]
-                    #print "Palabra de la oracion: " + words[0]
-                    #print "Palabra corregida por script: " + tweet[words[0]]
+                    print "Palabra corregida: " + words[2]
+                    print "Palabra de la oracion: " + words[0]
+                    print "Palabra corregida por script: " + tweet[words[0]]
 
                     if(len(tweet) > 0 and tweet.get(words[0]) and tweet[words[0]] == words[2] or (words[1] == 1 and tweets[words[0]] == words[0])):
                         n_corrected += 1
@@ -398,7 +387,8 @@ class GeneticAlgorithm(object):
                         evaluate = False
                     if(words[0] in self.available):
                         tweet = self.corrected[ind_weight][words[0]]
-                        #print "Tweet ID: " + words[0]
+                        print "Tweet ID: " + words[0]
+                        #print "Tweet" + str(tweet)
                         evaluate = True
 
             self.corrected[ind_weight]["fitness"] = n_corrected/n_words
@@ -415,30 +405,28 @@ def correct_words(aspell, spellchecker, words, add_to_dict=[]):
     
     for tweet_id, tweet_info in words.iteritems():
         for word, status in tweet_info.iteritems():
-            hunspell_suggestion_without_repetitions = []
-            aspell_suggestion_without_repetitions = []
-            suggestions = []
+            word_without_repetitions = re.sub(r'([a-z])\1+', r'\1',word)
             ok = spellchecker.spell(word)
-            print "Palabra: " + word + " - Ok?: " + str(ok)
             if not ok and status["status"] != 1:
-                word_without_repetitions = "".join(OrderedDict.fromkeys(word))
-                ok_rep = spellchecker.spell(word_without_repetitions)
-                if not ok_rep and status["status"] != 1:
-                    hunspell_suggestion_without_repetitions = spellchecker.suggest(word_without_repetitions)
+                ok2 = spellchecker.spell(word_without_repetitions)
+                if(not ok2):
+                    suggestions_with_repetitions = spellchecker.suggest(word)
+                    suggestion_without_repetitions = spellchecker.suggest(word_without_repetitions)
+                    aspell_suggestion = aspell.suggest(word)
                     aspell_suggestion_without_repetitions = aspell.suggest(word_without_repetitions)
-                hunspell_suggestions = spellchecker.suggest(word)
-                aspell_suggestions = aspell.suggest(word)
-                suggestions = hunspell_suggestions + aspell_suggestions + hunspell_suggestion_without_repetitions + aspell_suggestion_without_repetitions
-                if suggestions:
-                    print str(suggestions)
-                    for suggestion in suggestions:
-                        suggestion = suggestion.replace("-", "")
-                        print "Sugerencia: " + suggestion 
-                        words[tweet_id][word]["suggestions"][suggestion] = {"Levensthein": 0, "2gram": 0,"3gram": 0, "4gram": 0, "Phonetic": 0}
+
+                    suggestions = suggestions_with_repetitions + suggestion_without_repetitions + aspell_suggestion + aspell_suggestion_without_repetitions
+                    if suggestions:
+                        for suggestion in suggestions:
+                            words[tweet_id][word]["suggestions"][suggestion] = {"Levensthein": 0, "2gram": 0,"3gram": 0, "4gram": 0, "Phonetic": 0}
+                    else:
+                        words[tweet_id][word]["status"] = 2
                 else:
-                    words[tweet_id][word]["status"] = 2
+                    words[tweet_id][word]["status"] = 1
+                    words[tweet_id][word]["correct"] = word_without_repetitions
             else:
                 words[tweet_id][word]["status"] = 1
+                words[tweet_id][word]["correct"] = word
     return words
 
 def to_dictionary(tweets):
@@ -452,7 +440,7 @@ def to_dictionary(tweets):
                 if(word[0]) != "@" and word[0] != "#":
                     info[word.translate(None, ''.join(special_characters))] = {"status": 0, "suggestions": {}}
                 else:
-                    info[word] = {"status": 1, "suggestions": {}}
+                    info[word] = {"status": 1, "suggestions": {}, "correct": ""}
         dictionary[key] = info
 
     return dictionary
@@ -637,4 +625,16 @@ if __name__ == "__main__":
 
     #SRILM sudo ./ngram-count -text input.txt -order 4 -addsmooth 0 -lm 4gram.lm
 
-    GeneticAlgorithm(words, sentences, not_available, available)
+    GA = GeneticAlgorithm(words, sentences, not_available, available)
+
+    GA.generatePopulation()
+    GA.storeBigram()
+    GA.storeTrigram()
+    GA.storeTetragram()
+
+    for i in range(0, 100):
+        print "Iteracion: " + str(i)
+        GA.addScores()
+        GA.calculateFitness()
+        GA.selectionReproduction()
+        GA.mutation()
