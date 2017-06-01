@@ -129,7 +129,7 @@ class GeneticAlgorithm(object):
         self.words = words
         self.sentences = sentences
         self.weights = []
-        self.population = 100
+        self.population = 10
         self.scores = []
         self.corrected = {}
         self.answers = {}
@@ -372,16 +372,22 @@ class GeneticAlgorithm(object):
         n_words = 0
 
         for ind_weight, weights in enumerate(self.weights):
+            print "Peso: " + str(weights)
             for index, line in enumerate(tweets_info):
                 words = line.replace('\n', '').replace('\t', '').replace('\r','').split(' ')
                 if(len(words) == 3 and evaluate):
-                    print "Palabra corregida: " + words[2]
-                    print "Palabra de la oracion: " + words[0]
-                    print "Palabra corregida por script: " + tweet[words[0]]
+                    #print "Palabra de la oracion: " + words[0]
+                    #print "Palabra correcta: " + words[2]
+                    #print "Palabra corregida por script: " + tweet[words[0]]
 
                     if(len(tweet) > 0 and tweet.get(words[0]) and tweet[words[0]] == words[2] or (words[1] == 1 and tweets[words[0]] == words[0])):
+                        print "Palabra de la oracion: " + words[0]
+                        print "Palabra correcta: " + words[2]
+                        print "Script:" + tweet[words[0]]
                         n_corrected += 1
-                    n_words += 1
+                        print str(n_corrected)
+                    if(words[1] != 2):
+                        n_words += 1
                 else:
                     if(words[0] in self.not_available):
                         evaluate = False
@@ -393,7 +399,7 @@ class GeneticAlgorithm(object):
 
             self.corrected[ind_weight]["fitness"] = n_corrected/n_words
             print "Pesos: " + str(weights) + "- Fitness: " + str(self.corrected[ind_weight]["fitness"]*100)
-            #print "Correctos: " + str(n_corrected) + "- Palabras: " + str(n_words)
+            print "Correctos: " + str(n_corrected) + "- Palabras: " + str(n_words)
             n_corrected = 0
             n_words = 0
 
