@@ -129,7 +129,7 @@ class GeneticAlgorithm(object):
         self.words = words
         self.sentences = sentences
         self.weights = []
-        self.population = 10
+        self.population = 100
         self.scores = []
         self.corrected = {}
         self.answers = {}
@@ -140,38 +140,40 @@ class GeneticAlgorithm(object):
         self.tetragram = {}
 
     def storeBigram(self):
-        with open('files/2gram.txt', 'r') as lm_file:
-            lm = lm_file.readlines()
+        with open('files/bigram.txt', 'r') as myfile:
+            for line in myfile:
+                line = line.replace('\n', '').replace('\t', ' ').split(' ')
+                if(len(line[0]) > 0):
+                    if(self.bigram.has_key(line[1])):
+                        self.bigram[line[1].lower()][line[2].lower()] = pow(10, float(line[0]))
+                    else:
+                        self.bigram[line[1].lower()] = {}
+                        self.bigram[line[1].lower()][line[2].lower()] = pow(10, float(line[0]))
 
-        for line in lm:
-            line = line.replace('\n', '').replace('\t', ' ').split(' ')
-            if(len(line[0]) > 0):
-                if(self.bigram.has_key(line[1])):
-                    self.bigram[line[1]][line[2]] = pow(10, float(line[0]))
-                else:
-                    self.bigram[line[1]] = {}
-                    self.bigram[line[1]][line[2]] = pow(10, float(line[0]))
+        myfile.close()
 
     def storeTrigram(self):
-        with open('files/3gram.txt', 'r') as lm_file:
+        with open('files/trigram.txt', 'r') as lm_file:
             lm = lm_file.readlines()
 
         for line in lm:
             line = line.replace('\n', '').replace('\t', ' ').split(' ')
             if (len(line[0]) > 0):
-                if(self.trigram.has_key(line[1])):
-                    if(self.trigram[line[1]].has_key(line[2])):
-                        self.trigram[line[1]][line[2]][line[3]] = pow(10, float(line[0]))
+                if(self.trigram.has_key(line[1].lower())):
+                    if(self.trigram[line[1].lower()].has_key(line[2].lower())):
+                        self.trigram[line[1].lower()][line[2].lower()][line[3].lower()] = pow(10, float(line[0]))
                     else:
-                        self.trigram[line[1]][line[2]] = {}
-                        self.trigram[line[1]][line[2]][line[3]] = pow(10, float(line[0]))
+                        self.trigram[line[1].lower()][line[2].lower()] = {}
+                        self.trigram[line[1].lower()][line[2].lower()][line[3].lower()] = pow(10, float(line[0]))
                 else:
-                    self.trigram[line[1]] = {}
-                    self.trigram[line[1]][line[2]] = {}
-                    self.trigram[line[1]][line[2]][line[3]] = pow(10, float(line[0]))
+                    self.trigram[line[1].lower()] = {}
+                    self.trigram[line[1].lower()][line[2].lower()] = {}
+                    self.trigram[line[1].lower()][line[2].lower()][line[3].lower()] = pow(10, float(line[0]))
+
+        lm_file.close()
 
     def storeTetragram(self):
-        with open('files/4gram.txt', 'r') as lm_file:
+        with open('files/tetragram.txt', 'r') as lm_file:
             lm = lm_file.readlines()
 
         for line in lm:
@@ -193,6 +195,8 @@ class GeneticAlgorithm(object):
                     self.tetragram[line[1]][line[2]] = {}
                     self.tetragram[line[1]][line[2]][line[3]] = {}
                     self.tetragram[line[1]][line[2]][line[3]][line[4]] = pow(10, float(line[0]))
+
+        lm_file.close()
 
     def selectionReproduction(self):
         new_weigths = []
@@ -225,9 +229,9 @@ class GeneticAlgorithm(object):
 
             best2 = self.tournament(self.corrected[k1]["fitness"], self.corrected[k2]["fitness"], self.corrected[k3]["fitness"], k1, k2 ,k3)
 
-            alpha = int(round(random.random()*5))
-            if alpha > 4:
-                alpha = 4
+            alpha = int(round(random.random()*4))
+            if alpha > 3:
+                alpha = 3
             beta = random.random()
             element_one = best1[alpha]
             element_two = best2[alpha]
@@ -255,9 +259,9 @@ class GeneticAlgorithm(object):
 
     def mutation(self):
         for index, weights in enumerate(self.weights):
-            alpha = int(round(random.random()*5))
-            if alpha >= 5:
-                alpha = 4
+            alpha = int(round(random.random()*4))
+            if alpha > 3:
+                alpha = 3
             self.weights[index][alpha] = random.random()
             factor = 1/sum(self.weights[index])
             for i, weight in enumerate(self.weights[index]):
@@ -267,7 +271,7 @@ class GeneticAlgorithm(object):
         for i in range(self.population):
             self.corrected[i] = {}
             new_weigths = []
-            for w in range(5):
+            for w in range(4):
                 new_weigths.append(random.random())
             factor = 1/sum(new_weigths)
             for i, w in enumerate(new_weigths):
@@ -320,34 +324,37 @@ class GeneticAlgorithm(object):
                                         max_levensthein = scores['Levensthein']
                                     if(scores['Phonetic'] > max_phonetic):
                                         max_phonetic = scores['Phonetic']
-                                prev_word = self.corrected[we_index][tweet_id][sentence[index-1]]
-                                for sug, scores in self.words[tweet_id][word]["suggestions"].iteritems():
-                                    levensthein_score = (max_levensthein - scores['Levensthein'])/max_levensthein
-                                    phonetic_score = (max_phonetic - scores['Levensthein'])/max_phonetic
-                                    score = self.calculateScore(levensthein_score, phonetic_score, weights)
-                                    #print "Sugerencia: " + sug
-                                    #print "Score LevenstheinC y Fonema: "+ str(score) 
-                                    score += self.addBigram(prev_word, sug, weights[1])
-                                    #print "Plus Bigram Score: "+ str(score)
-                                    if(index > 1):
-                                        prev_prev_word = self.corrected[we_index][tweet_id][sentence[index-2]]
-                                        score += self.addTrigram(prev_prev_word, prev_word, sug, weights[2])
-                                        #print "Plus Trigram Score: "+ str(score)
-                                    if(index > 2):
-                                        prev_prev_prev_word = self.corrected[we_index][tweet_id][sentence[index-3]]
-                                        score += self.addTetragram(prev_prev_prev_word, prev_prev_word, prev_word, sug, weights[3])
-                                        #print "Plus Tetragram Score: "+ str(score)
-                                    if(score > max_score):
-                                        self.corrected[we_index][tweet_id][word] = sug
-                                        max_score = score
-                                    #print "\n"
+                                if(self.corrected[we_index][tweet_id].has_key(sentence[index-1])):
+                                    prev_word = self.corrected[we_index][tweet_id][sentence[index-1]]
+                                    for sug, scores in self.words[tweet_id][word]["suggestions"].iteritems():
+                                        levensthein_score = (max_levensthein - scores['Levensthein'])/max_levensthein
+                                        phonetic_score = (max_phonetic - scores['Levensthein'])/max_phonetic
+                                        score = self.calculateScore(levensthein_score, phonetic_score, weights)
+                                        #print "Sugerencia: " + sug
+                                        #print "Score LevenstheinC y Fonema: "+ str(score)
+                                        score += self.addBigram(prev_word.lower(), sug.lower(), weights[2])
+                                        #print "Plus Bigram Score: "+ str(score)
+                                        if(index > 1):
+                                            if(self.corrected[we_index][tweet_id].has_key(sentence[index-2])):
+                                                prev_prev_word = self.corrected[we_index][tweet_id][sentence[index-2]]
+                                                score += self.addTrigram(prev_prev_word.lower(), prev_word.lower(), sug.lower(), weights[3])
+                                                #print "Plus Trigram Score: "+ str(score)
+                                        if(index > 2):
+                                            if(self.corrected[we_index][tweet_id].has_key(sentence[index-3])):
+                                                prev_prev_prev_word = self.corrected[we_index][tweet_id][sentence[index-3]]
+                                                #score += self.addTetragram(prev_prev_prev_word.lower(), prev_prev_word.lower(), prev_word.lower(), sug.lower(), weights[4])
+                                                #print "Plus Tetragram Score: "+ str(score)
+                                        if(score > max_score):
+                                            self.corrected[we_index][tweet_id][word] = sug
+                                            max_score = score
+                                        #print "\n"
                         else:
                             self.corrected[we_index][tweet_id][word] = self.words[tweet_id][word]["correct"]
                     else:
                         self.corrected[we_index][tweet_id][word] = word
 
     def calculateScore(self, lev, phon, weights):
-        return lev*weights[0] + phon*weights[4]
+        return lev*weights[0] + phon*weights[1]
 
     def addBigram(self, first_word, second_word, bigram_weight):
         if(self.bigram.has_key(first_word) and self.bigram[first_word].has_key(second_word)):
@@ -365,7 +372,7 @@ class GeneticAlgorithm(object):
         return 0
 
     def calculateFitness(self):
-        with open('files/tweet-norm-dev100_annotated.txt', 'r') as tweets_file:
+        with open('files/tweet-norm-dev500_annotated.txt', 'r') as tweets_file:
             tweets_info = tweets_file.readlines()
 
         n_corrected = 0
@@ -376,16 +383,16 @@ class GeneticAlgorithm(object):
             for index, line in enumerate(tweets_info):
                 words = line.replace('\n', '').replace('\t', '').replace('\r','').split(' ')
                 if(len(words) == 3 and evaluate):
-                    #print "Palabra de la oracion: " + words[0]
-                    #print "Palabra correcta: " + words[2]
-                    #print "Palabra corregida por script: " + tweet[words[0]]
+                    print "Palabra de la oracion: " + words[0]
+                    print "Palabra correcta: " + words[2]
+                    print "Palabra corregida por script: " + tweet[words[0]]
 
                     if(len(tweet) > 0 and tweet.get(words[0]) and tweet[words[0]] == words[2] or (words[1] == 1 and tweets[words[0]] == words[0])):
-                        print "Palabra de la oracion: " + words[0]
-                        print "Palabra correcta: " + words[2]
-                        print "Script:" + tweet[words[0]]
+                        #print "Palabra de la oracion: " + words[0]
+                        #print "Palabra correcta: " + words[2]
+                        #print "Script:" + tweet[words[0]]
                         n_corrected += 1
-                        print str(n_corrected)
+                        #print str(n_corrected)
                     if(words[1] != 2):
                         n_words += 1
                 else:
@@ -412,27 +419,21 @@ def correct_words(aspell, spellchecker, words, add_to_dict=[]):
     for tweet_id, tweet_info in words.iteritems():
         for word, status in tweet_info.iteritems():
             word_without_repetitions = re.sub(r'([a-z])\1+', r'\1',word)
-            ok = spellchecker.spell(word)
-            if not ok and status["status"] != 1:
-                ok2 = spellchecker.spell(word_without_repetitions)
-                if(not ok2):
-                    suggestions_with_repetitions = spellchecker.suggest(word)
-                    suggestion_without_repetitions = spellchecker.suggest(word_without_repetitions)
-                    aspell_suggestion = aspell.suggest(word)
-                    aspell_suggestion_without_repetitions = aspell.suggest(word_without_repetitions)
-
-                    suggestions = suggestions_with_repetitions + suggestion_without_repetitions + aspell_suggestion + aspell_suggestion_without_repetitions
-                    if suggestions:
-                        for suggestion in suggestions:
-                            words[tweet_id][word]["suggestions"][suggestion] = {"Levensthein": 0, "2gram": 0,"3gram": 0, "4gram": 0, "Phonetic": 0}
-                    else:
-                        words[tweet_id][word]["status"] = 2
+            hunspell_ok = spellchecker.spell(word_without_repetitions)
+            aspell_ok = aspell.check(word_without_repetitions)
+            if not aspell_ok or not hunspell_ok and status["status"] != 1:
+                hunspell_suggestions = spellchecker.suggest(word_without_repetitions)
+                aspell_suggestions = aspell.suggest(word_without_repetitions)
+                suggestions = hunspell_suggestions + aspell_suggestions
+                if suggestions:
+                    for suggestion in suggestions:
+                        words[tweet_id][word]["suggestions"][suggestion] = {"Levensthein": 0, "2gram": 0,"3gram": 0, "4gram": 0, "Phonetic": 0}
                 else:
                     words[tweet_id][word]["status"] = 1
                     words[tweet_id][word]["correct"] = word_without_repetitions
             else:
                 words[tweet_id][word]["status"] = 1
-                words[tweet_id][word]["correct"] = word
+                words[tweet_id][word]["correct"] = word_without_repetitions
     return words
 
 def to_dictionary(tweets):
@@ -462,6 +463,7 @@ def find_capitals(words):
                 names = names.split(' ')
                 if word == names and word != '':
                     words[tweet_id][word]['status'] = 1
+                    words[tweet_id][word]['correct'] = word
                     #print "Esta palabra existe en forenames: " + word
                     break
     capitals.close()
@@ -476,6 +478,7 @@ def find_abreviaturas(words):
                     abreviatura = abreviaturas_row[0].replace('\n', '').lower().split(' ')
                     if word == abreviatura and word != '':
                         words[tweet_id][word]['status'] = 1
+                        words[tweet_id][word]['correct'] = word
                         #print "Esta palabra existe en abreviaturas: " + word
                         break
     abreviaturas_file.close()
@@ -490,6 +493,7 @@ def find_acronimos(words):
                     acronim = acronims_row[0].replace('\n', '').lower()
                     if word == acronim and word != '':
                         words[tweet_id][word]['status'] = 1
+                        words[tweet_id][word]['correct'] = word
                         #print "Esta palabra existe en acronimos: " + word
                         break
     acronims_file.close()
@@ -505,6 +509,7 @@ def find_forenames(words):
                 names = names.split(' ')
                 if word == names:
                     words[tweet_id][word]['status'] = 1
+                    words[tweet_id][word]['correct'] = word
                     #print "Esta palabra existe en forenames: " + word
                     break
     forenames.close()
@@ -520,6 +525,7 @@ def find_titles(words):
                 names = names.replace('\n', '').lower()
                 if word == names and word != '':
                     words[tweet_id][word]['status'] = 1
+                    words[tweet_id][word]['correct'] = word
                     #print "Esta palabra existe en titulos: " + word
                     break
     titles.close()
@@ -535,6 +541,7 @@ def find_person_names(words):
                 names = names.replace('\n', '')
                 if word == names and word != '':
                     words[tweet_id][word]['status'] = 1
+                    words[tweet_id][word]['correct'] = word
                     #print "Esta palabra existe en Person names: " + word
                     break
     names_file.close()
@@ -551,6 +558,7 @@ def find_gentilicis(words):
                 names = names.split(' ')
                 if word == names and word != '':
                     words[tweet_id][word]['status'] = 1
+                    words[tweet_id][word]['correct'] = word
                     #print "Esta palabra existe en Gentilicios: " + word
                     break
     gentilicis.close()
@@ -566,6 +574,7 @@ def find_neologism(words):
                 names = names.replace('\n', '')
                 if word == names and word != '':
                     words[tweet_id][word]['status'] = 1
+                    words[tweet_id][word]['correct'] = word
                     #print "Esta palabra existe en Neologismos: " + word
                     break
     neo_file.close()
@@ -588,7 +597,7 @@ def make_transcription(words):
 
 if __name__ == "__main__":
 
-    with open('files/tweets_dev100.txt', 'r') as tweets_file:
+    with open('files/tweets_dev500.txt', 'r') as tweets_file:
         tweets_info = tweets_file.readlines()
 
     tweets = {}
@@ -624,22 +633,23 @@ if __name__ == "__main__":
 
     # for tweet_id, tweet_info in words.iteritems():
     #     for word, words_info in tweet_info.iteritems():
+    #         print str(words_info)
     #         print "Palabra: " + word + " - Estado: " + str(words_info["status"])
     #         print "Sugerencias: "
     #         for sug, scr in words_info["suggestions"].iteritems():
     #             print sug
 
-    #SRILM sudo ./ngram-count -text input.txt -order 4 -addsmooth 0 -lm 4gram.lm
+    #SRILM sudo ./ngram-count -text corpus-billion.txt -order 4 -addsmooth 0 -lm billion.lm
 
     GA = GeneticAlgorithm(words, sentences, not_available, available)
 
     GA.generatePopulation()
     GA.storeBigram()
     GA.storeTrigram()
-    GA.storeTetragram()
+    #GA.storeTetragram()
 
     for i in range(0, 100):
-        print "Iteracion: " + str(i)
+        #print "Iteracion: " + str(i)
         GA.addScores()
         GA.calculateFitness()
         GA.selectionReproduction()
