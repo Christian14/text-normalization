@@ -2492,7 +2492,6 @@ tv movie
 tweet
 twiter
 twittear
-twitter
 twittercomentarista
 twittero
 twittera
@@ -2618,10 +2617,9 @@ zip
 zona euro
 zooterapia
 retuitear
-twitter
-Twitter
-walking
 retuiteado
+Twitter
+Walking
 Acoustic
 Windows
 Phone
@@ -2629,3 +2627,10 @@ Gym
 Peliculita
 mami
 New
+GH
+Android
+IOS
+PC
+RTs
+Atleti
+BBQScreen
